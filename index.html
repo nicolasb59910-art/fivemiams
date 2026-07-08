@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
+<title>FiveMiams 🍽️</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+
+  body {
+    background: linear-gradient(160deg, #fef3f8 0%, #eef2ff 35%, #ecfdf5 70%, #fff7ed 100%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    color: #1e293b;
+    font-family: 'Nunito', -apple-system, 'Helvetica Neue', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Bulles de fond pastel animées */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -25%; left: -15%;
+    width: 65vw; height: 65vw;
+    background: radial-gradient(circle, rgba(244,114,182,.18) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float1 14s ease-in-out infinite;
+    pointer-events: none; z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%; right: -10%;
+    width: 55vw; height: 55vw;
+    background: radial-gradient(circle, rgba(56,189,248,.16) 0%, transparent 70%);
+    border-radius: 50%;
+    animation: float2 17s ease-in-out infinite;
+    pointer-events: none; z-index: 0;
+  }
+  @keyframes float1 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(5%,8%) scale(1.08)} }
+  @keyframes float2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-4%,-6%) scale(1.05)} }
+
+  /* Liquid Glass clair — carte */
+  .glass {
+    background: rgba(255,255,255,.65);
+    backdrop-filter: blur(20px) saturate(160%);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    border: 1px solid rgba(255,255,255,.8);
+    border-radius: 20px;
+    box-shadow: 0 6px 24px rgba(100,116,139,.12), inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  .glass-strong {
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255,255,255,.9);
+    border-radius: 24px;
+    box-shadow: 0 12px 36px rgba(100,116,139,.18), inset 0 1px 0 rgba(255,255,255,.95);
+  }
+  .glass-pill {
+    background: rgba(255,255,255,.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.7);
+    border-radius: 100px;
+    box-shadow: 0 3px 12px rgba(100,116,139,.1), inset 0 1px 0 rgba(255,255,255,.8);
+  }
+
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:rgba(100,116,139,.25);border-radius:2px}
+
+  input, select, button { font-family: inherit; }
+
+  .glass-input {
+    background: rgba(255,255,255,.75);
+    border: 1.5px solid rgba(203,213,225,.8);
+    border-radius: 14px;
+    color: #1e293b;
+    padding: 10px 16px;
+    font-size: 14px;
+    outline: none;
+    transition: all .2s;
+  }
+  .glass-input::placeholder { color: #94a3b8; }
+  .glass-input:focus { background: #fff; border-color: #f97316; }
+  .glass-input option { background: #fff; color: #1e293b; }
+
+  /* Bouton pill */
+  .pill-btn {
+    background: rgba(255,255,255,.7);
+    border: 1.5px solid rgba(203,213,225,.7);
+    border-radius: 100px;
+    color: #64748b;
+    padding: 5px 14px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all .2s;
+  }
+  .pill-btn:hover { background: #fff; }
+  .pill-btn.active {
+    background: linear-gradient(135deg,#f97316,#fb923c);
+    color: #fff;
+    font-weight: 700;
+    border-color: transparent;
+    box-shadow: 0 4px 14px rgba(249,115,22,.35);
+  }
+
+  /* Tab bar iOS claire */
+  .tab-bar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 10px calc(10px + env(safe-area-inset-bottom));
+    background: rgba(255,255,255,.85);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border-top: 1px solid rgba(226,232,240,.8);
+    box-shadow: 0 -4px 20px rgba(100,116,139,.08);
+    z-index: 100;
+  }
+  .tab-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    cursor: pointer;
+    background: none; border: none;
+    color: #94a3b8;
+    font-size: 10px; font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 14px;
+    transition: all .2s;
+    flex: 1;
+  }
+  .tab-btn.active {
+    color: #f97316;
+    background: rgba(249,115,22,.1);
+  }
+  .tab-btn .tab-icon { font-size: 22px; line-height: 1; }
+
+  .pref-btn {
+    flex: 1; min-width: 44px; text-align: center;
+    border-radius: 12px; padding: 6px 2px;
+    cursor: pointer;
+    border: 1.5px solid rgba(203,213,225,.6);
+    background: rgba(255,255,255,.5);
+    transition: all .15s;
+  }
+  .pref-btn:active { transform: scale(.93); }
+
+  .meal-card {
+    background: rgba(255,255,255,.7);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,.85);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: 0 4px 16px rgba(100,116,139,.1);
+    transition: transform .15s;
+  }
+  .meal-card:active { transform: scale(.98); }
+
+  .badge { border-radius: 100px; padding: 3px 10px; font-size: 10px; font-weight: 700; color: #fff; }
+
+  .stat-chip {
+    display: flex; flex-direction: column; align-items: center;
+    background: rgba(255,255,255,.7);
+    border: 1.5px solid rgba(226,232,240,.8);
+    border-radius: 16px;
+    padding: 8px 14px;
+    cursor: pointer;
+    min-width: 70px;
+    transition: all .2s;
+  }
+
+  .shop-item {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(255,255,255,.7);
+    border: 1.5px solid rgba(226,232,240,.8);
+    border-radius: 14px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all .15s;
+    width: 100%; text-align: left;
+    color: #1e293b;
+    box-shadow: 0 2px 8px rgba(100,116,139,.06);
+  }
+  .shop-item:active { transform: scale(.98); }
+  .shop-item.checked { opacity: .55; background: rgba(52,211,153,.15); border-color: rgba(52,211,153,.4); }
+
+  .section-header {
+    font-size: 13px; font-weight: 800;
+    color: #f97316;
+    text-transform: uppercase; letter-spacing: 1px;
+    margin-bottom: 10px; margin-top: 4px;
+    padding: 0 4px;
+  }
+
+  .profile-meal-btn {
+    background: rgba(255,255,255,.7);
+    border: 1.5px solid rgba(226,232,240,.8);
+    border-radius: 14px;
+    color: #1e293b;
+    padding: 10px 14px;
+    cursor: pointer;
+    display: flex; justify-content: space-between; align-items: center; gap: 8px;
+    font-size: 13px; text-align: left;
+    transition: all .15s;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(100,116,139,.06);
+  }
+  .profile-meal-btn:active { transform: scale(.97); }
+
+  @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+  .fade-in { animation: fadeIn .25s ease; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinning { animation: spin .8s linear infinite; display:inline-block; }
+
+  .content-area { padding-bottom: calc(90px + env(safe-area-inset-bottom)); }
+
+  /* Logo FiveMiams */
+  .logo-wrap { display: flex; align-items: center; gap: 10px; }
+  .logo-text {
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, #f97316, #ec4899 60%, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+// Logo FiveMiams — 5 ronds colorés (les 5 membres) formant une assiette
+const Logo = () => (
+  <svg width="34" height="34" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="46" fill="#fff" opacity="0.7"/>
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#fb923c" strokeWidth="3" opacity="0.5"/>
+    <circle cx="50" cy="26" r="11" fill="#f472b6"/>
+    <circle cx="71" cy="40" r="11" fill="#a78bfa"/>
+    <circle cx="63" cy="66" r="11" fill="#34d399"/>
+    <circle cx="37" cy="66" r="11" fill="#38bdf8"/>
+    <circle cx="29" cy="40" r="11" fill="#fb923c"/>
+    <circle cx="50" cy="50" r="7" fill="#1e293b" opacity="0.15"/>
+  </svg>
+);
+
+const MEMBERS_DEFAULT = [
+  { id:"g1", name:"Iris",      age:11,   color:"#f472b6", grad:"linear-gradient(135deg,#f472b6,#ec4899)", emoji:"👧" },
+  { id:"g2", name:"Alice",     age:12,   color:"#a78bfa", grad:"linear-gradient(135deg,#a78bfa,#8b5cf6)", emoji:"👧" },
+  { id:"g3", name:"Léa",       age:16,   color:"#34d399", grad:"linear-gradient(135deg,#34d399,#10b981)", emoji:"👧" },
+  { id:"g4", name:"Nico",      age:null, color:"#38bdf8", grad:"linear-gradient(135deg,#38bdf8,#0ea5e9)", emoji:"👨" },
+  { id:"g5", name:"Charlotte", age:null, color:"#fb923c", grad:"linear-gradient(135deg,#fb923c,#f97316)", emoji:"👩" },
+];
+
+const INGREDIENT_CATS_DEFAULT = {
+  "🍎 Fruits":             ["Pomme","Poire","Banane","Orange","Mandarine","Fraise","Framboise","Cerise","Raisin","Pastèque","Melon","Pêche","Abricot","Prune","Kiwi","Mangue","Ananas","Myrtille","Figue","Grenade"],
+  "🥦 Légumes crus":       ["Tomate","Concombre","Carotte","Radis","Salade verte","Mâche","Roquette","Céleri","Fenouil","Poivron","Avocat","Maïs","Betterave","Chou-fleur cru","Brocoli cru","Épinards"],
+  "🥕 Légumes cuits":      ["Haricots verts","Petits pois","Brocoli","Courgette","Aubergine","Poireau","Chou","Chou-fleur","Champignons","Épinards cuits","Asperges","Artichaut","Potiron","Navet","Pomme de terre","Patate douce","Lentilles","Pois chiches","Flageolets"],
+  "🌿 Aromates":           ["Ail","Oignon","Échalote","Persil","Basilic","Menthe","Coriandre","Thym","Citron","Olive","Câpres"],
+  "🥩 Viandes & poissons": ["Poulet","Steak haché","Côtelette","Jambon","Lardons","Merguez","Saucisse","Thon","Saumon","Cabillaud","Crevettes","Sardine"],
+  "🧀 Laitiers & œufs":   ["Œufs","Fromage râpé","Emmental","Camembert","Brie","Chèvre","Mozzarella","Crème fraîche","Yaourt","Lait","Beurre"],
+  "🍞 Féculents":          ["Pâtes","Riz","Pain","Pommes de terre","Semoule","Quinoa","Boulgour","Pâte à pizza","Pain de mie","Tortillas"],
+  "🥫 Épicerie":           ["Sauce tomate","Ketchup","Moutarde","Mayonnaise","Sauce soja","Huile d'olive","Vinaigre","Lait de coco","Curry","Paprika"],
+};
+
+const MEAL_CATS = ["Tous","🍝 Pâtes & riz","🥩 Viandes","🐟 Poissons","🥧 Tartes & quiches","🥦 Légumes & gratins","🍳 Œufs","🌍 Du monde","⚡ Rapide & snack","✨ Raffiné"];
+
+const MEALS_DEFAULT = [
+  {id:1,name:"Pâtes bolognaise",cat:"🍝 Pâtes & riz"},{id:2,name:"Lasagnes",cat:"🍝 Pâtes & riz"},{id:3,name:"Pennes à la crème",cat:"🍝 Pâtes & riz"},{id:4,name:"Tagliatelles saumon",cat:"🍝 Pâtes & riz"},{id:5,name:"Riz cantonnais",cat:"🍝 Pâtes & riz"},{id:6,name:"Risotto parmesan",cat:"🍝 Pâtes & riz"},{id:7,name:"Risotto champignons",cat:"🍝 Pâtes & riz"},{id:8,name:"Nouilles sautées",cat:"🍝 Pâtes & riz"},
+  {id:10,name:"Poulet rôti",cat:"🥩 Viandes"},{id:11,name:"Poulet basquaise",cat:"🥩 Viandes"},{id:12,name:"Poulet au curry",cat:"🥩 Viandes"},{id:13,name:"Poulet citron-thym",cat:"🥩 Viandes"},{id:14,name:"Steak frites",cat:"🥩 Viandes"},{id:15,name:"Boulettes sauce tomate",cat:"🥩 Viandes"},{id:16,name:"Côtelettes grillées",cat:"🥩 Viandes"},{id:17,name:"Hachis parmentier",cat:"🥩 Viandes"},{id:18,name:"Blanquette de veau",cat:"🥩 Viandes"},{id:19,name:"Bœuf bourguignon",cat:"🥩 Viandes"},{id:20,name:"Merguez grillées",cat:"🥩 Viandes"},
+  {id:30,name:"Saumon grillé",cat:"🐟 Poissons"},{id:31,name:"Saumon en papillote",cat:"🐟 Poissons"},{id:32,name:"Cabillaud beurre blanc",cat:"🐟 Poissons"},{id:33,name:"Poisson pané",cat:"🐟 Poissons"},{id:34,name:"Crevettes sautées à l'ail",cat:"🐟 Poissons"},{id:35,name:"Thon à la provençale",cat:"🐟 Poissons"},{id:36,name:"Brandade de morue",cat:"🐟 Poissons"},
+  {id:40,name:"Quiche lorraine",cat:"🥧 Tartes & quiches"},{id:41,name:"Quiche saumon épinards",cat:"🥧 Tartes & quiches"},{id:42,name:"Tarte à la tomate",cat:"🥧 Tartes & quiches"},{id:43,name:"Tarte poireaux-chèvre",cat:"🥧 Tartes & quiches"},{id:44,name:"Flamiche aux poireaux",cat:"🥧 Tartes & quiches"},{id:45,name:"Pizza maison",cat:"🥧 Tartes & quiches"},{id:46,name:"Pizza 4 fromages",cat:"🥧 Tartes & quiches"},
+  {id:50,name:"Gratin dauphinois",cat:"🥦 Légumes & gratins"},{id:51,name:"Gratin de courgettes",cat:"🥦 Légumes & gratins"},{id:52,name:"Gratin de brocolis",cat:"🥦 Légumes & gratins"},{id:53,name:"Ratatouille",cat:"🥦 Légumes & gratins"},{id:54,name:"Poêlée de légumes",cat:"🥦 Légumes & gratins"},{id:55,name:"Purée maison",cat:"🥦 Légumes & gratins"},{id:56,name:"Soupe de légumes",cat:"🥦 Légumes & gratins"},{id:57,name:"Velouté de butternut",cat:"🥦 Légumes & gratins"},{id:58,name:"Minestrone",cat:"🥦 Légumes & gratins"},
+  {id:60,name:"Omelette garnie",cat:"🍳 Œufs"},{id:61,name:"Œufs cocotte",cat:"🍳 Œufs"},{id:62,name:"Frittata légumes",cat:"🍳 Œufs"},{id:63,name:"Shakshuka",cat:"🍳 Œufs"},
+  {id:70,name:"Tacos maison",cat:"🌍 Du monde"},{id:71,name:"Fajitas poulet",cat:"🌍 Du monde"},{id:72,name:"Wok de bœuf",cat:"🌍 Du monde"},{id:73,name:"Bol Buddha",cat:"🌍 Du monde"},{id:74,name:"Pad thaï",cat:"🌍 Du monde"},{id:75,name:"Tajine poulet citron",cat:"🌍 Du monde"},{id:76,name:"Couscous royal",cat:"🌍 Du monde"},{id:77,name:"Chili con carne",cat:"🌍 Du monde"},
+  {id:80,name:"Croque-monsieur",cat:"⚡ Rapide & snack"},{id:81,name:"Hot-dogs",cat:"⚡ Rapide & snack"},{id:82,name:"Tartines gratinées",cat:"⚡ Rapide & snack"},{id:83,name:"Wrap poulet salade",cat:"⚡ Rapide & snack"},{id:84,name:"Salade niçoise",cat:"⚡ Rapide & snack"},{id:85,name:"Salade César",cat:"⚡ Rapide & snack"},{id:86,name:"Burger maison",cat:"⚡ Rapide & snack"},
+  {id:90,name:"Filet de bar beurre blanc",cat:"✨ Raffiné"},{id:91,name:"Magret de canard",cat:"✨ Raffiné"},{id:92,name:"Noix de Saint-Jacques",cat:"✨ Raffiné"},{id:93,name:"Saumon sauce hollandaise",cat:"✨ Raffiné"},{id:94,name:"Tarte tatin aux légumes",cat:"✨ Raffiné"},{id:95,name:"Filet mignon en croûte",cat:"✨ Raffiné"},{id:96,name:"Parmentier de canard",cat:"✨ Raffiné"},
+];
+
+const PREF_CYCLE = { neutral:"yes", yes:"bof", bof:"no", no:"neutral" };
+const PREF_EMOJI = { yes:"😊", bof:"😐", no:"🙅", neutral:"·" };
+const PREF_LABEL = { yes:"J'aime", bof:"Bof", no:"J'aime pas", neutral:"Non renseigné" };
+const PREF_COLOR = { yes:"#059669", bof:"#d97706", no:"#dc2626", neutral:"#94a3b8" };
+const PREF_BG    = { yes:"rgba(52,211,153,.18)", bof:"rgba(251,191,36,.18)", no:"rgba(248,113,113,.18)", neutral:"rgba(255,255,255,.7)" };
+const PREF_BORDER= { yes:"rgba(5,150,105,.5)", bof:"rgba(217,119,6,.5)", no:"rgba(220,38,38,.5)", neutral:"rgba(203,213,225,.8)" };
+
+const APP_VERSION = "v2.1";
+
+function App() {
+  const [tab,            setTab]           = useState("profiles");
+  const [profileSubTab,  setProfileSubTab] = useState("plats");
+  const [members,        setMembers]       = useState(MEMBERS_DEFAULT);
+  const [mealPrefs,      setMealPrefs]     = useState({});
+  const [ingPrefs,       setIngPrefs]      = useState({});
+  const [meals,          setMeals]         = useState(MEALS_DEFAULT);
+  const [cartItems,      setCartItems]     = useState([]);
+  const [customIngs,     setCustomIngs]    = useState({});
+  const [activeMember,   setActiveMember]  = useState("g1");
+  const [mealCat,        setMealCat]       = useState("Tous");
+  const [tonightCat,     setTonightCat]    = useState("Tous");
+  const [ingCat,         setIngCat]        = useState(Object.keys(INGREDIENT_CATS_DEFAULT)[0]);
+  const [ingSearch,      setIngSearch]     = useState("");
+  const [newMeal,        setNewMeal]       = useState({ name:"", cat:"🍝 Pâtes & riz" });
+  const [showAddMeal,    setShowAddMeal]   = useState(false);
+  const [newIng,         setNewIng]        = useState({ name:"", cat:Object.keys(INGREDIENT_CATS_DEFAULT)[0] });
+  const [showAddIng,     setShowAddIng]    = useState(false);
+  const [editingMember,  setEditingMember] = useState(null);
+  const [saveStatus,     setSaveStatus]    = useState("");
+  const [presentIds,     setPresentIds]    = useState(MEMBERS_DEFAULT.map(m=>m.id));
+  const [mealFilter,     setMealFilter]    = useState("all");
+  const [showTopMenu,    setShowTopMenu]   = useState(false);
+  const [isReloading,    setIsReloading]   = useState(false);
+  const [isLoaded,       setIsLoaded]      = useState(false);
+  const [loadError,      setLoadError]     = useState("");
+
+  // Merge ingrédients par défaut + custom
+  const INGREDIENT_CATS = Object.fromEntries(
+    Object.entries(INGREDIENT_CATS_DEFAULT).map(([cat, items]) => [
+      cat,
+      [...items, ...(customIngs[cat] || [])],
+    ])
+  );
+
+  // ── Configuration JSONBin ──
+  const JSONBIN_ID  = '6a32fc73f5f4af5e29043140';
+  const JSONBIN_KEY = '$2a$10$2CseMlcWWNrAY6LAX3JvduA8BXLa1Hi.aYdICx.G3RbkbJscRpJZ';
+  const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_ID}`;
+
+  const rAll = useRef({});
+  rAll.current = { members, mealPrefs, ingPrefs, meals, cartItems, presentIds, customIngs };
+
+  // ── Chargement depuis JSONBin au démarrage ──
+  useEffect(() => {
+    fetch(`${JSONBIN_URL}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY },
+    })
+      .then(r => r.json())
+      .then(res => {
+        const d = res.record || res;
+        const remoteHasData = d && (
+          (d.mealPrefs && Object.keys(d.mealPrefs).length > 0) ||
+          (d.ingPrefs && Object.keys(d.ingPrefs).length > 0)
+        );
+        if (!remoteHasData) {
+          try {
+            const raw = localStorage.getItem("menu-famille-v4");
+            if (raw) {
+              const ld = JSON.parse(raw);
+              if (ld.members)    setMembers(ld.members);
+              if (ld.mealPrefs)  setMealPrefs(ld.mealPrefs);
+              if (ld.ingPrefs)   setIngPrefs(ld.ingPrefs);
+              if (ld.meals)      setMeals(ld.meals);
+              if (ld.cartItems)  setCartItems(ld.cartItems);
+              if (ld.presentIds) setPresentIds(ld.presentIds);
+              if (ld.customIngs) setCustomIngs(ld.customIngs);
+            }
+          } catch(e) {}
+          setIsLoaded(true);
+          return;
+        }
+        if (d.members)    setMembers(d.members);
+        if (d.mealPrefs)  setMealPrefs(d.mealPrefs);
+        if (d.ingPrefs)   setIngPrefs(d.ingPrefs);
+        if (d.meals)      setMeals(d.meals);
+        if (d.cartItems)  setCartItems(d.cartItems);
+        if (d.presentIds) setPresentIds(d.presentIds);
+        if (d.customIngs) setCustomIngs(d.customIngs);
+        setIsLoaded(true);
+      })
+      .catch((err) => {
+        setLoadError("JSONBin inaccessible : " + (err.message || "erreur réseau"));
+        try {
+          const raw = localStorage.getItem("menu-famille-v4");
+          if (raw) {
+            const d = JSON.parse(raw);
+            if (d.members)    setMembers(d.members);
+            if (d.mealPrefs)  setMealPrefs(d.mealPrefs);
+            if (d.ingPrefs)   setIngPrefs(d.ingPrefs);
+            if (d.meals)      setMeals(d.meals);
+            if (d.cartItems)  setCartItems(d.cartItems);
+            if (d.presentIds) setPresentIds(d.presentIds);
+            if (d.customIngs) setCustomIngs(d.customIngs);
+          }
+        } catch(e) {}
+        setIsLoaded(true);
+      });
+  }, []);
+
+  // ── Fonction de rechargement manuel ──
+  const reloadData = () => {
+    setIsReloading(true);
+    fetch(`${JSONBIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } })
+      .then(r => r.json())
+      .then(res => {
+        const d = res.record || res;
+        if (d.members)    setMembers(d.members);
+        if (d.mealPrefs)  setMealPrefs(d.mealPrefs);
+        if (d.ingPrefs)   setIngPrefs(d.ingPrefs);
+        if (d.meals)      setMeals(d.meals);
+        if (d.cartItems)  setCartItems(d.cartItems);
+        if (d.presentIds) setPresentIds(d.presentIds);
+        if (d.customIngs) setCustomIngs(d.customIngs);
+        setTimeout(()=>setIsReloading(false), 400);
+      })
+      .catch(() => setIsReloading(false));
+  };
+
+  // ── Rechargement auto toutes les 30 secondes ──
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetch(`${JSONBIN_URL}/latest`, { headers: { 'X-Master-Key': JSONBIN_KEY } })
+        .then(r => r.json())
+        .then(res => {
+          const d = res.record || res;
+          // Garde-fou : ne pas écraser des données locales avec un bin vide
+          const remoteHasData = d && (
+            (d.mealPrefs && Object.keys(d.mealPrefs).length > 0) ||
+            (d.ingPrefs && Object.keys(d.ingPrefs).length > 0)
+          );
+          const localHasData = (
+            Object.keys(rAll.current.mealPrefs||{}).length > 0 ||
+            Object.keys(rAll.current.ingPrefs||{}).length > 0
+          );
+          if (!remoteHasData && localHasData) return; // bin vide + on a des données → on garde les nôtres
+
+          if (d.members)    setMembers(d.members);
+          if (d.mealPrefs)  setMealPrefs(d.mealPrefs);
+          if (d.ingPrefs)   setIngPrefs(d.ingPrefs);
+          if (d.meals)      setMeals(d.meals);
+          if (d.cartItems)  setCartItems(d.cartItems);
+          if (d.presentIds) setPresentIds(d.presentIds);
+          if (d.customIngs) setCustomIngs(d.customIngs);
+        })
+        .catch(() => {});
+    }, 30000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // ── Sauvegarde vers JSONBin ──
+  const saveAll = (patch) => {
+    // Ne JAMAIS sauvegarder tant que les données n'ont pas été chargées
+    if (!isLoaded) return;
+    const merged = { ...rAll.current, ...patch };
+    // Garde-fou : ne jamais écraser le bin avec des données vides
+    if (Object.keys(merged.mealPrefs||{}).length === 0 && Object.keys(merged.ingPrefs||{}).length === 0) return;
+    // Sauvegarde locale immédiate (fallback)
+    try { localStorage.setItem("menu-famille-v4", JSON.stringify(merged)); } catch(e) {}
+    // Sauvegarde distante JSONBin
+    setSaveStatus("saving");
+    fetch(JSONBIN_URL, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_KEY,
+      },
+      body: JSON.stringify(merged),
+    })
+      .then(r => r.json())
+      .then(() => { setSaveStatus("saved"); setTimeout(()=>setSaveStatus(""), 2000); })
+      .catch(() => { setSaveStatus("saved"); setTimeout(()=>setSaveStatus(""), 2000); });
+  };
+
+  const updMembers   = v => { setMembers(v);    saveAll({ members: v }); };
+  const updMealPrefs = v => { setMealPrefs(v);  saveAll({ mealPrefs: v }); };
+  const updIngPrefs  = v => { setIngPrefs(v);   saveAll({ ingPrefs: v }); };
+  const updMeals     = v => { setMeals(v);      saveAll({ meals: v }); };
+  const updCart      = v => { setCartItems(v);  saveAll({ cartItems: v }); };
+  const updPresent   = v => { setPresentIds(v); saveAll({ presentIds: v }); };
+  const updCustomIngs= v => { setCustomIngs(v); saveAll({ customIngs: v }); };
+
+  const addIngredient = (name, cat) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const allExisting = Object.values(INGREDIENT_CATS).flat();
+    if (allExisting.map(i=>i.toLowerCase()).includes(trimmed.toLowerCase())) return;
+    const updated = { ...customIngs, [cat]: [...(customIngs[cat]||[]), trimmed] };
+    updCustomIngs(updated);
+  };
+
+  const removeIngredient = (name, cat) => {
+    if (!(customIngs[cat]||[]).includes(name)) return;
+    const updated = { ...customIngs, [cat]: customIngs[cat].filter(i=>i!==name) };
+    updCustomIngs(updated);
+  };
+
+  const getMealPref   = (mid, uid) => (mealPrefs[mid]||{})[uid] || "neutral";
+  const cycleMealPref = (mid, uid) => {
+    const next = PREF_CYCLE[getMealPref(mid, uid)];
+    updMealPrefs({ ...mealPrefs, [mid]: { ...(mealPrefs[mid]||{}), [uid]: next } });
+  };
+  const getIngPref   = (uid, ing) => (ingPrefs[uid]||{})[ing] || "neutral";
+  const cycleIngPref = (uid, ing) => {
+    const next = PREF_CYCLE[getIngPref(uid, ing)];
+    updIngPrefs({ ...ingPrefs, [uid]: { ...(ingPrefs[uid]||{}), [ing]: next } });
+  };
+
+  const getDecision = (meal, mids) => {
+    const nos  = mids.filter(mid => getMealPref(meal.id, mid) === "no").length;
+    const bofs = mids.filter(mid => getMealPref(meal.id, mid) === "bof").length;
+    if (nos >= 2) return "veto";
+    if (nos === 1) return "warn";
+    if (bofs >= Math.ceil(mids.length / 2)) return "warn";
+    return "go";
+  };
+  const decisionCfg = d => ({
+    go:   { label:"On cuisine !", bg:"rgba(52,211,153,.85)",  glow:"rgba(52,211,153,.3)"  },
+    warn: { label:"Quelques bof", bg:"rgba(251,191,36,.85)",  glow:"rgba(251,191,36,.3)"  },
+    veto: { label:"Veto",         bg:"rgba(248,113,113,.85)", glow:"rgba(248,113,113,.3)" },
+  }[d]);
+
+  const allIds = members.map(m=>m.id);
+  const mealStats = {
+    go:   meals.filter(m=>getDecision(m,allIds)==="go").length,
+    warn: meals.filter(m=>getDecision(m,allIds)==="warn").length,
+    veto: meals.filter(m=>getDecision(m,allIds)==="veto").length,
+  };
+  const mealsTonight = meals.filter(m => getDecision(m, presentIds) !== "veto");
+
+  const filteredMeals = meals.filter(m => {
+    const catOk = mealCat==="Tous" || m.cat===mealCat;
+    const dec = getDecision(m, allIds);
+    return catOk && (mealFilter==="all" || dec===mealFilter);
+  });
+  const tonightFiltered = mealsTonight.filter(m => tonightCat==="Tous" || m.cat===tonightCat);
+
+  const ingItems = ingSearch
+    ? Object.values(INGREDIENT_CATS).flat().filter(i=>i.toLowerCase().includes(ingSearch.toLowerCase()))
+    : (INGREDIENT_CATS[ingCat]||[]);
+
+  const activeMemberObj = members.find(m=>m.id===activeMember) || members[0];
+  const filledCount = (uid) => meals.filter(m=>getMealPref(m.id,uid)!=="neutral").length;
+
+  const exportData = () => {
+    const d = { members, mealPrefs, ingPrefs, meals, cartItems, presentIds, exportedAt: new Date().toISOString() };
+    const blob = new Blob([JSON.stringify(d,null,2)],{type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href=url; a.download="menu-famille-sauvegarde.json"; a.click();
+    URL.revokeObjectURL(url);
+  };
+  const sendByEmail = () => {
+    const d = { members, mealPrefs, ingPrefs, meals, cartItems, presentIds, exportedAt: new Date().toISOString() };
+    const s = encodeURIComponent("Menu Famille — Sauvegarde");
+    const b = encodeURIComponent(`Sauvegarde\nDate : ${new Date().toLocaleString("fr-FR")}\n\n${JSON.stringify(d,null,2)}`);
+    window.location.href = `mailto:nico.bern@free.fr?subject=${s}&body=${b}`;
+  };
+  const importData = (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        const d = JSON.parse(ev.target.result);
+        // Mettre à jour l'état local
+        if (d.members)    setMembers(d.members);
+        if (d.mealPrefs)  setMealPrefs(d.mealPrefs);
+        if (d.ingPrefs)   setIngPrefs(d.ingPrefs);
+        if (d.meals)      setMeals(d.meals);
+        if (d.cartItems)  setCartItems(d.cartItems);
+        if (d.presentIds) setPresentIds(d.presentIds);
+        if (d.customIngs) setCustomIngs(d.customIngs);
+
+        // Construire l'objet complet à sauvegarder (toutes les clés présentes)
+        const fullData = {
+          members:    d.members    || members,
+          mealPrefs:  d.mealPrefs  || {},
+          ingPrefs:   d.ingPrefs   || {},
+          meals:      d.meals      || meals,
+          cartItems:  d.cartItems  || [],
+          presentIds: d.presentIds || members.map(m=>m.id),
+          customIngs: d.customIngs || {},
+        };
+        // Mettre à jour la ref immédiatement pour éviter tout écrasement
+        rAll.current = fullData;
+        try { localStorage.setItem("menu-famille-v4", JSON.stringify(fullData)); } catch(e) {}
+
+        // Sauvegarde DIRECTE vers JSONBin, on attend la confirmation
+        setSaveStatus("saving");
+        fetch(JSONBIN_URL, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+          body: JSON.stringify(fullData),
+        })
+          .then(r => r.json())
+          .then(() => {
+            setSaveStatus("saved");
+            setTimeout(()=>setSaveStatus(""), 2000);
+            alert("✅ Importé et sauvegardé pour toute la famille !");
+          })
+          .catch(() => {
+            alert("⚠️ Importé localement, mais la sauvegarde en ligne a échoué. Réessaie avec une connexion stable.");
+          });
+      } catch(_) { alert("❌ Fichier invalide."); }
+    };
+    reader.readAsText(file); e.target.value="";
+  };
+
+  // ─── Composants ───────────────────────────────────────────────────────────
+
+  const MealCard = ({ meal, mids }) => {
+    const d = getDecision(meal, mids);
+    const cfg = decisionCfg(d);
+    const displayMembers = members.filter(m=>mids.includes(m.id));
+    return (
+      <div className="meal-card fade-in">
+        <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", gap:"8px", marginBottom:"10px" }}>
+          <div style={{ fontWeight:"600", fontSize:"14px", flex:1, lineHeight:1.3 }}>{meal.name}</div>
+          <span className="badge" style={{ background:cfg.bg, boxShadow:`0 0 12px ${cfg.glow}`, flexShrink:0 }}>{cfg.label}</span>
+        </div>
+        <div style={{ display:"flex", gap:"5px" }}>
+          {displayMembers.map(member => {
+            const pref = getMealPref(meal.id, member.id);
+            return (
+              <button key={member.id} className="pref-btn"
+                onClick={()=>cycleMealPref(meal.id, member.id)}
+                style={{ background:PREF_BG[pref], borderColor:PREF_BORDER[pref] }}
+                title={`${member.name} : ${PREF_LABEL[pref]}`}>
+                <div style={{ fontSize:"15px" }}>{PREF_EMOJI[pref]}</div>
+                <div style={{ fontSize:"9px", color:member.color, fontWeight:"700", marginTop:"2px" }}>{member.name.substring(0,5)}</div>
+              </button>
+            );
+          })}
+          <button onClick={()=>updMeals(meals.filter(m=>m.id!==meal.id))}
+            style={{ background:"rgba(255,255,255,.7)", border:"1px solid rgba(226,232,240,.8)", borderRadius:"10px", color:"#94a3b8", cursor:"pointer", padding:"4px 8px", fontSize:"12px" }}>🗑</button>
+        </div>
+      </div>
+    );
+  };
+
+  const CatFilter = ({ cats, active, onSelect, color }) => (
+    <div style={{ display:"flex", gap:"6px", overflowX:"auto", paddingBottom:"6px", marginBottom:"14px" }}>
+      {cats.map(c => (
+        <button key={c} className={`pill-btn ${active===c?"active":""}`} onClick={()=>onSelect(c)}
+          style={ active===c && color ? { background:color, color:"#fff", borderColor:"transparent" } : {} }>
+          {c}
+        </button>
+      ))}
+    </div>
+  );
+
+  const SectionHeader = ({children}) => <div className="section-header">{children}</div>;
+
+  const PageTitle = ({icon, title, sub}) => (
+    <div style={{ padding:"18px 20px 10px", position:"relative", zIndex:1 }}>
+      <div style={{ fontSize:"24px", fontWeight:"800", letterSpacing:"-0.5px", color:"#1e293b", display:"flex", alignItems:"center", gap:"8px" }}>
+        <span style={{ fontSize:"26px" }}>{icon}</span>{title}
+      </div>
+      {sub && <div style={{ fontSize:"14px", color:"#64748b", marginTop:"4px", fontWeight:"600" }}>{sub}</div>}
+    </div>
+  );
+
+  // ── Écran de chargement ──
+  if (!isLoaded) {
+    return (
+      <div style={{
+        display:"flex", flexDirection:"column", alignItems:"center", justifyContent:"center",
+        height:"100vh", gap:"16px", position:"relative", zIndex:1, padding:"20px",
+      }}>
+        <Logo/>
+        <span className="logo-text" style={{ fontSize:"28px" }}>FiveMiams</span>
+        <div style={{ fontSize:"14px", color:"#64748b", fontWeight:"600" }}>Chargement des données...</div>
+        <div className="spinning" style={{ fontSize:"28px" }}>🔄</div>
+        <div style={{ fontSize:"11px", color:"#94a3b8", marginTop:"20px" }}>{APP_VERSION}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ position:"relative", zIndex:1 }}>
+
+      {/* ── TOP BAR ── */}
+      <div style={{
+        position:"sticky", top:0, zIndex:50,
+        display:"flex", alignItems:"center", justifyContent:"space-between",
+        padding:"12px 18px",
+        background:"rgba(255,255,255,.75)",
+        backdropFilter:"blur(30px) saturate(180%)", WebkitBackdropFilter:"blur(30px) saturate(180%)",
+        borderBottom:"1px solid rgba(226,232,240,.8)",
+        boxShadow:"0 2px 12px rgba(100,116,139,.06)",
+      }}>
+        <div className="logo-wrap">
+          <Logo/>
+          <span className="logo-text">FiveMiams</span>
+          {saveStatus==="saving" && (
+            <span style={{ fontSize:"11px", color:"#f59e0b", background:"rgba(245,158,11,.12)", border:"1px solid rgba(245,158,11,.3)", borderRadius:"20px", padding:"2px 10px" }}>⟳ ...</span>
+          )}
+          {saveStatus==="saved" && (
+            <span style={{ fontSize:"11px", color:"#059669", background:"rgba(5,150,105,.12)", border:"1px solid rgba(5,150,105,.3)", borderRadius:"20px", padding:"2px 10px" }}>✓</span>
+          )}
+        </div>
+        <div style={{ display:"flex", alignItems:"center", gap:"8px", position:"relative" }}>
+          {/* Bouton Actualiser */}
+          <button onClick={reloadData} title="Actualiser les données" style={{ background:"rgba(255,255,255,.8)", border:"1.5px solid rgba(226,232,240,.9)", borderRadius:"12px", color:"#f97316", padding:"7px 11px", cursor:"pointer", fontSize:"15px" }}>
+            <span className={isReloading ? "spinning" : ""}>🔄</span>
+          </button>
+          {/* Menu ⋯ */}
+          <button onClick={()=>setShowTopMenu(!showTopMenu)} style={{ background:"rgba(255,255,255,.8)", border:"1.5px solid rgba(226,232,240,.9)", borderRadius:"12px", color:"#64748b", padding:"7px 12px", cursor:"pointer", fontSize:"16px" }}>⋯</button>
+          {showTopMenu && (
+            <div className="glass-strong fade-in" style={{ position:"absolute", right:0, top:"46px", minWidth:"180px", padding:"8px", zIndex:100 }}>
+              <button onClick={()=>{ exportData(); setShowTopMenu(false); }} style={{ display:"block", width:"100%", background:"none", border:"none", color:"#1e293b", padding:"10px 14px", cursor:"pointer", fontSize:"13px", textAlign:"left", borderRadius:"10px", fontWeight:"600" }}>⬇️ Exporter</button>
+              <button onClick={()=>{ sendByEmail(); setShowTopMenu(false); }} style={{ display:"block", width:"100%", background:"none", border:"none", color:"#1e293b", padding:"10px 14px", cursor:"pointer", fontSize:"13px", textAlign:"left", borderRadius:"10px", fontWeight:"600" }}>📧 Envoyer</button>
+              <label style={{ display:"block", width:"100%", color:"#1e293b", padding:"10px 14px", cursor:"pointer", fontSize:"13px", borderRadius:"10px", fontWeight:"600" }}>
+                ⬆️ Importer<input type="file" accept=".json" onChange={(e)=>{ importData(e); setShowTopMenu(false); }} style={{ display:"none" }}/>
+              </label>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── CONTENU ── */}
+      <div className="content-area">
+
+        {/* ══ PROFILS ══ */}
+        {tab==="profiles" && (
+          <div className="fade-in">
+            <PageTitle icon="👤" title="Profils" sub="Note tes goûts une fois, c'est tout." />
+            <div style={{ padding:"0 16px" }}>
+
+              {/* Sélecteur membre — style capsule horizontal */}
+              <div style={{ display:"flex", gap:"8px", overflowX:"auto", paddingBottom:"8px", marginBottom:"16px" }}>
+                {members.map((m,i) => {
+                  const active = activeMember===m.id;
+                  return (
+                    <button key={m.id} onClick={()=>setActiveMember(m.id)} style={{
+                      background: active ? m.grad : "rgba(255,255,255,.85)",
+                      border: `2.5px solid ${active ? "#1e293b" : "rgba(203,213,225,.9)"}`,
+                      borderRadius:"100px", padding:"8px 16px", cursor:"pointer",
+                      display:"flex", alignItems:"center", gap:"7px", flexShrink:0,
+                      boxShadow: active ? `0 6px 22px ${m.color}88, 0 0 0 3px ${m.color}33` : "0 2px 6px rgba(100,116,139,.1)",
+                      transform: active ? "scale(1.05)" : "scale(1)",
+                      transition:"all .2s",
+                    }}>
+                      <span style={{ fontSize:"18px" }}>{m.emoji}</span>
+                      <div style={{ textAlign:"left" }}>
+                        {editingMember===m.id ? (
+                          <input autoFocus value={m.name}
+                            className="glass-input"
+                            onChange={e=>{ const nm=[...members]; nm[i]={...nm[i],name:e.target.value}; updMembers(nm); }}
+                            onBlur={()=>setEditingMember(null)}
+                            onClick={ev=>ev.stopPropagation()}
+                            style={{ width:"80px", padding:"2px 8px", fontSize:"12px" }}
+                          />
+                        ) : (
+                          <div style={{ fontWeight:"800", color:active?"#fff":m.color, fontSize:"13px" }}
+                            onDoubleClick={ev=>{ ev.stopPropagation(); setEditingMember(m.id); }}>
+                            {m.name}
+                          </div>
+                        )}
+                        <div style={{ fontSize:"10px", color:active?"rgba(255,255,255,.85)":"#64748b", fontWeight:"600" }}>{filledCount(m.id)}/{meals.length}</div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Sous-onglets */}
+              <div className="glass-pill" style={{ display:"flex", padding:"4px", marginBottom:"18px" }}>
+                {[{id:"plats",label:"🍽️ Plats"},{id:"ingredients",label:"🥕 Ingrédients"}].map(st=>(
+                  <button key={st.id} onClick={()=>setProfileSubTab(st.id)} style={{
+                    flex:1, background:profileSubTab===st.id?"linear-gradient(135deg,#f97316,#fb923c)":"transparent",
+                    border:"none", borderRadius:"100px", color:profileSubTab===st.id?"#fff":"#64748b",
+                    padding:"8px", cursor:"pointer", fontSize:"13px", fontWeight:profileSubTab===st.id?"700":"500",
+                    transition:"all .2s",
+                  }}>{st.label}</button>
+                ))}
+              </div>
+
+              {/* Légende */}
+              <div className="glass" style={{ display:"flex", gap:"12px", flexWrap:"wrap", padding:"10px 14px", marginBottom:"16px", fontSize:"12px" }}>
+                {["neutral","yes","bof","no"].map(p=>(
+                  <span key={p} style={{ color:p==="neutral"?"#94a3b8":PREF_COLOR[p] }}>{PREF_EMOJI[p]} {PREF_LABEL[p]}</span>
+                ))}
+              </div>
+
+              {/* PLATS */}
+              {profileSubTab==="plats" && (
+                <div>
+                  <CatFilter cats={MEAL_CATS} active={mealCat} onSelect={setMealCat} />
+                  {(mealCat==="Tous" ? MEAL_CATS.filter(c=>c!=="Tous") : [mealCat]).map(cat => {
+                    const catMeals = meals.filter(m=>m.cat===cat);
+                    if (!catMeals.length) return null;
+                    return (
+                      <div key={cat} style={{ marginBottom:"20px" }}>
+                        <SectionHeader>{cat}</SectionHeader>
+                        <div style={{ display:"flex", flexDirection:"column", gap:"7px" }}>
+                          {catMeals.map(meal => {
+                            const pref = getMealPref(meal.id, activeMember);
+                            return (
+                              <button key={meal.id} className="profile-meal-btn"
+                                onClick={()=>cycleMealPref(meal.id, activeMember)}
+                                style={{ background:PREF_BG[pref], borderColor:PREF_BORDER[pref] }}>
+                                <span style={{ fontWeight:pref!=="neutral"?"600":"400" }}>{meal.name}</span>
+                                <span style={{ fontSize:"20px", flexShrink:0 }}>{PREF_EMOJI[pref]}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* INGRÉDIENTS */}
+              {profileSubTab==="ingredients" && (
+                <div>
+                  <input placeholder="🔍 Rechercher un ingrédient..." value={ingSearch} onChange={e=>setIngSearch(e.target.value)}
+                    className="glass-input" style={{ width:"100%", marginBottom:"12px" }}/>
+                  {!ingSearch && <CatFilter cats={Object.keys(INGREDIENT_CATS)} active={ingCat} onSelect={c=>{ setIngCat(c); setIngSearch(""); }} color="rgba(56,189,248,.8)" />}
+
+                  {/* Bouton ajouter ingrédient */}
+                  <button onClick={()=>setShowAddIng(!showAddIng)} style={{
+                    background:"linear-gradient(135deg,rgba(56,189,248,.7),rgba(14,165,233,.7))",
+                    border:"none", borderRadius:"14px", color:"#fff",
+                    padding:"8px 16px", cursor:"pointer", fontSize:"13px", fontWeight:"700",
+                    marginBottom:"12px", boxShadow:"0 4px 16px rgba(56,189,248,.25)",
+                  }}>+ Ajouter un ingrédient</button>
+
+                  {showAddIng && (
+                    <div className="glass fade-in" style={{ padding:"14px", marginBottom:"14px" }}>
+                      <p style={{ fontSize:"12px", color:"#64748b", marginBottom:"10px" }}>L'ingrédient sera ajouté pour toute la famille.</p>
+                      <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
+                        <input placeholder="Nom de l'ingrédient" value={newIng.name}
+                          onChange={e=>setNewIng({...newIng,name:e.target.value})}
+                          onKeyDown={e=>{ if(e.key==="Enter"){ addIngredient(newIng.name,newIng.cat); setNewIng({...newIng,name:""}); setShowAddIng(false); }}}
+                          className="glass-input" style={{ flex:1, minWidth:"140px" }}/>
+                        <select value={newIng.cat} onChange={e=>setNewIng({...newIng,cat:e.target.value})} className="glass-input">
+                          {Object.keys(INGREDIENT_CATS).map(c=><option key={c}>{c}</option>)}
+                        </select>
+                        <button onClick={()=>{ addIngredient(newIng.name,newIng.cat); setNewIng({...newIng,name:""}); setShowAddIng(false); }}
+                          style={{ background:"rgba(52,211,153,.8)", border:"none", borderRadius:"12px", color:"#fff", padding:"10px 16px", cursor:"pointer", fontWeight:"700" }}>✓</button>
+                      </div>
+                    </div>
+                  )}
+
+                  <div style={{ display:"flex", flexWrap:"wrap", gap:"7px" }}>
+                    {ingItems.map(ing => {
+                      const pref = getIngPref(activeMember, ing);
+                      const isCustom = (customIngs[ingCat]||[]).includes(ing);
+                      return (
+                        <div key={ing} style={{ display:"flex", alignItems:"center", gap:"0" }}>
+                          <button onClick={()=>cycleIngPref(activeMember, ing)} style={{
+                            background:PREF_BG[pref], border:`1.5px solid ${PREF_BORDER[pref]}`,
+                            borderRadius: isCustom ? "100px 0 0 100px" : "100px",
+                            borderRight: isCustom ? "none" : undefined,
+                            color:"#1e293b", padding:"7px 14px",
+                            cursor:"pointer", fontSize:"13px",
+                            display:"flex", alignItems:"center", gap:"6px",
+                          }}>
+                            <span>{PREF_EMOJI[pref]}</span><span>{ing}</span>
+                          </button>
+                          {isCustom && (
+                            <button onClick={()=>removeIngredient(ing, ingCat)} style={{
+                              background:PREF_BG[pref], border:`1.5px solid ${PREF_BORDER[pref]}`,
+                              borderLeft:"none", borderRadius:"0 100px 100px 0",
+                              color:"#94a3b8", padding:"7px 8px",
+                              cursor:"pointer", fontSize:"11px",
+                            }} title="Supprimer cet ingrédient">✕</button>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ══ TOUS LES PLATS ══ */}
+        {tab==="meals" && (
+          <div className="fade-in">
+            <PageTitle icon="🍽️" title="Tous les plats" sub="Vue globale · Cliquer pour modifier" />
+            <div style={{ padding:"0 16px" }}>
+
+              {/* Stats */}
+              <div style={{ display:"flex", gap:"8px", marginBottom:"16px" }}>
+                {[{k:"go",l:"On cuisine !",bg:"rgba(52,211,153,.85)",glow:"rgba(52,211,153,.25)"},{k:"warn",l:"Quelques bof",bg:"rgba(251,191,36,.85)",glow:"rgba(251,191,36,.25)"},{k:"veto",l:"Veto",bg:"rgba(248,113,113,.85)",glow:"rgba(248,113,113,.25)"}].map(({k,l,bg,glow})=>(
+                  <button key={k} className="stat-chip" onClick={()=>setMealFilter(mealFilter===k?"all":k)}
+                    style={{ background:mealFilter===k?bg:"rgba(255,255,255,.8)", borderColor:mealFilter===k?"transparent":"rgba(226,232,240,.9)", boxShadow:mealFilter===k?`0 4px 20px ${glow}`:"none" }}>
+                    <div style={{ fontSize:"22px", fontWeight:"800", color:mealFilter===k?"#fff":bg.replace(".85",".9") }}>{mealStats[k]}</div>
+                    <div style={{ fontSize:"9px", color:"#64748b" }}>{l}</div>
+                  </button>
+                ))}
+              </div>
+
+              <CatFilter cats={MEAL_CATS} active={mealCat} onSelect={setMealCat} />
+
+              {/* Ajouter */}
+              <button onClick={()=>setShowAddMeal(!showAddMeal)} style={{
+                background:"linear-gradient(135deg,rgba(251,146,60,.8),rgba(249,115,22,.8))",
+                border:"none", borderRadius:"14px", color:"#fff",
+                padding:"10px 18px", cursor:"pointer", fontSize:"13px", fontWeight:"700",
+                marginBottom:"14px", boxShadow:"0 4px 20px rgba(249,115,22,.3)",
+              }}>+ Créer un plat</button>
+
+              {showAddMeal && (
+                <div className="glass fade-in" style={{ padding:"16px", marginBottom:"14px" }}>
+                  <p style={{ fontSize:"12px", color:"#64748b", marginBottom:"10px" }}>Nommez le plat, choisissez une catégorie. Les membres pourront le noter depuis Profils.</p>
+                  <div style={{ display:"flex", gap:"8px", flexWrap:"wrap" }}>
+                    <input placeholder="Nom du plat" value={newMeal.name} onChange={e=>setNewMeal({...newMeal,name:e.target.value})}
+                      className="glass-input" style={{ flex:1, minWidth:"140px" }}
+                      onKeyDown={e=>{ if(e.key==="Enter" && newMeal.name.trim()){ updMeals([...meals,{id:Date.now(),name:newMeal.name,cat:newMeal.cat}]); setNewMeal({name:"",cat:"🍝 Pâtes & riz"}); setShowAddMeal(false); }}}
+                    />
+                    <select value={newMeal.cat} onChange={e=>setNewMeal({...newMeal,cat:e.target.value})} className="glass-input">
+                      {MEAL_CATS.filter(c=>c!=="Tous").map(c=><option key={c}>{c}</option>)}
+                    </select>
+                    <button onClick={()=>{ if(!newMeal.name.trim())return; updMeals([...meals,{id:Date.now(),name:newMeal.name,cat:newMeal.cat}]); setNewMeal({name:"",cat:"🍝 Pâtes & riz"}); setShowAddMeal(false); }}
+                      style={{ background:"rgba(52,211,153,.8)", border:"none", borderRadius:"12px", color:"#fff", padding:"10px 18px", cursor:"pointer", fontWeight:"700", boxShadow:"0 4px 16px rgba(52,211,153,.3)" }}>✓</button>
+                  </div>
+                </div>
+              )}
+
+              {(mealCat==="Tous" ? MEAL_CATS.filter(c=>c!=="Tous") : [mealCat]).map(cat => {
+                const catMeals = filteredMeals.filter(m=>m.cat===cat);
+                if (!catMeals.length) return null;
+                return (
+                  <div key={cat} style={{ marginBottom:"24px" }}>
+                    <SectionHeader>{cat}</SectionHeader>
+                    <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(260px,1fr))", gap:"8px" }}>
+                      {catMeals.map(meal => <MealCard key={meal.id} meal={meal} mids={allIds} />)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ══ CE SOIR ══ */}
+        {tab==="tonight" && (
+          <div className="fade-in">
+            <PageTitle icon="🌙" title="Ce soir" sub="Qui est là ? On trouve quoi à manger." />
+            <div style={{ padding:"0 16px" }}>
+
+              {/* Convives */}
+              <div style={{ display:"flex", gap:"8px", flexWrap:"wrap", marginBottom:"16px" }}>
+                {members.map(m => {
+                  const present = presentIds.includes(m.id);
+                  return (
+                    <button key={m.id} onClick={()=>updPresent(present?presentIds.filter(id=>id!==m.id):[...presentIds,m.id])} style={{
+                      background: present ? m.grad : "rgba(241,245,249,.9)",
+                      border:`2.5px solid ${present ? "#1e293b" : "rgba(203,213,225,.9)"}`,
+                      borderRadius:"100px", padding:"9px 16px", cursor:"pointer",
+                      display:"flex", alignItems:"center", gap:"7px",
+                      opacity: present ? 1 : .6,
+                      boxShadow: present ? `0 6px 22px ${m.color}88, 0 0 0 3px ${m.color}33` : "none",
+                      transform: present ? "scale(1.05)" : "scale(.96)",
+                      transition:"all .2s",
+                      filter: present ? "none" : "grayscale(.4)",
+                    }}>
+                      <span style={{ fontSize:"18px" }}>{present ? m.emoji : "💤"}</span>
+                      <span style={{ fontWeight:"800", fontSize:"13px", color: present ? "#fff" : "#64748b" }}>{m.name}</span>
+                      {present
+                        ? <span style={{ fontSize:"13px", color:"#fff", fontWeight:"900" }}>✓</span>
+                        : <span style={{ fontSize:"11px", color:"#94a3b8" }}>absent</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {presentIds.length===0 && (
+                <div className="glass" style={{ padding:"40px", textAlign:"center", color:"#94a3b8" }}>Sélectionne au moins une personne 👆</div>
+              )}
+
+              {presentIds.length>0 && (<>
+                {/* Résumé */}
+                <div className="glass" style={{ padding:"12px 16px", marginBottom:"16px", display:"flex", gap:"16px", flexWrap:"wrap" }}>
+                  <span style={{ color:"#34d399", fontWeight:"700" }}>✓ {mealsTonight.length} plats OK</span>
+                  <span style={{ color:"#94a3b8", fontSize:"13px" }}>sur {meals.length} · {presentIds.map(id=>members.find(m=>m.id===id)?.name).filter(Boolean).join(", ")}</span>
+                </div>
+                <CatFilter cats={MEAL_CATS} active={tonightCat} onSelect={setTonightCat} />
+                {(tonightCat==="Tous" ? MEAL_CATS.filter(c=>c!=="Tous") : [tonightCat]).map(cat => {
+                  const catMeals = tonightFiltered.filter(m=>m.cat===cat);
+                  if (!catMeals.length) return null;
+                  return (
+                    <div key={cat} style={{ marginBottom:"22px" }}>
+                      <SectionHeader>{cat} ({catMeals.length})</SectionHeader>
+                      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(240px,1fr))", gap:"8px" }}>
+                        {catMeals.map(meal => <MealCard key={meal.id} meal={meal} mids={presentIds} />)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>)}
+            </div>
+          </div>
+        )}
+
+        {/* ══ COURSES ══ */}
+        {tab==="shopping" && (
+          <div className="fade-in">
+            <div style={{ padding:"20px 16px 10px", display:"flex", justifyContent:"space-between", alignItems:"flex-start" }}>
+              <div>
+                <div style={{ fontSize:"24px", fontWeight:"800", letterSpacing:"-0.5px", color:"#1e293b", display:"flex", alignItems:"center", gap:"8px" }}>
+                  <span style={{ fontSize:"26px" }}>🛒</span>Courses
+                </div>
+                <div style={{ fontSize:"14px", color:"#64748b", marginTop:"4px", fontWeight:"600" }}>Coche ce que tu prends</div>
+              </div>
+              <div style={{ display:"flex", gap:"8px", alignItems:"center", marginTop:"8px" }}>
+                <div style={{ background:"rgba(5,150,105,.15)", border:"1px solid rgba(5,150,105,.35)", borderRadius:"20px", padding:"5px 12px", fontSize:"13px", color:"#059669", fontWeight:"700" }}>{cartItems.length} items</div>
+                <button onClick={()=>updCart([])} style={{ background:"rgba(255,255,255,.8)", border:"1px solid rgba(226,232,240,.9)", borderRadius:"12px", color:"#64748b", padding:"6px 12px", cursor:"pointer", fontSize:"12px" }}>Vider</button>
+              </div>
+            </div>
+            <div style={{ padding:"0 16px" }}>
+              {/* Légende */}
+              <div className="glass" style={{ padding:"10px 14px", marginBottom:"14px", fontSize:"12px", display:"flex", gap:"16px", flexWrap:"wrap", color:"#64748b" }}>
+                <span style={{ color:"rgba(248,113,113,.8)" }}>🙅 n'aime pas</span>
+                <span style={{ color:"rgba(251,191,36,.8)" }}>😐 bof</span>
+                <span style={{ color:"rgba(52,211,153,.8)" }}>✓ dans le panier</span>
+              </div>
+              {/* Recherche + filtres */}
+              <input placeholder="🔍 Rechercher..." value={ingSearch} onChange={e=>setIngSearch(e.target.value)}
+                className="glass-input" style={{ width:"100%", marginBottom:"10px" }}/>
+              {!ingSearch && <CatFilter cats={["Tous",...Object.keys(INGREDIENT_CATS)]} active={ingCat||"Tous"} onSelect={c=>{ setIngCat(c==="Tous"?"":c); setIngSearch(""); }} />}
+
+              {(() => {
+                const catsToShow = ingSearch
+                  ? [["Résultats", Object.values(INGREDIENT_CATS).flat().filter(i=>i.toLowerCase().includes(ingSearch.toLowerCase()))]]
+                  : (!ingCat || ingCat==="Tous")
+                    ? Object.entries(INGREDIENT_CATS)
+                    : [[ingCat, INGREDIENT_CATS[ingCat]||[]]];
+                return catsToShow.map(([cat,items])=>{
+                  if(!items.length) return null;
+                  return (
+                    <div key={cat} style={{ marginBottom:"20px" }}>
+                      <SectionHeader>{cat}</SectionHeader>
+                      <div style={{ display:"flex", flexDirection:"column", gap:"5px" }}>
+                        {items.map(item => {
+                          const inCart = cartItems.includes(item);
+                          const dislikes = members.filter(m=>getIngPref(m.id,item)==="no");
+                          const bofs = members.filter(m=>getIngPref(m.id,item)==="bof");
+                          return (
+                            <button key={item} className={`shop-item ${inCart?"checked":""}`}
+                              onClick={()=>updCart(inCart?cartItems.filter(i=>i!==item):[...cartItems,item])}>
+                              {/* Checkbox */}
+                              <div style={{ width:"22px", height:"22px", borderRadius:"8px", flexShrink:0, border:`2px solid ${inCart?"#34d399":"rgba(255,255,255,.2)"}`, background:inCart?"rgba(52,211,153,.3)":"transparent", display:"flex", alignItems:"center", justifyContent:"center", fontSize:"12px", color:"#34d399", fontWeight:"900" }}>
+                                {inCart?"✓":""}
+                              </div>
+                              <span style={{ flex:1, fontSize:"14px", fontWeight:"500", textDecoration:inCart?"line-through":"none" }}>{item}</span>
+                              {/* Badges */}
+                              <div style={{ display:"flex", gap:"4px", flexWrap:"wrap", justifyContent:"flex-end" }}>
+                                {dislikes.map(m=>(
+                                  <span key={m.id} style={{ background:"rgba(248,113,113,.15)", border:"1px solid rgba(248,113,113,.3)", borderRadius:"8px", padding:"1px 7px", fontSize:"10px", color:"rgba(248,113,113,.9)", whiteSpace:"nowrap" }}>🙅 {m.name}</span>
+                                ))}
+                                {bofs.map(m=>(
+                                  <span key={m.id} style={{ background:"rgba(251,191,36,.15)", border:"1px solid rgba(251,191,36,.3)", borderRadius:"8px", padding:"1px 7px", fontSize:"10px", color:"rgba(251,191,36,.9)", whiteSpace:"nowrap" }}>😐 {m.name}</span>
+                                ))}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Erreur de connexion JSONBin */}
+      {loadError && (
+        <div style={{ position:"fixed", bottom:"80px", left:"10px", right:"10px", zIndex:99,
+          background:"#fef2f2", border:"1.5px solid #fecaca", borderRadius:"14px",
+          padding:"10px 14px", fontSize:"12px", color:"#dc2626", fontWeight:"600",
+          boxShadow:"0 4px 16px rgba(220,38,38,.15)",
+        }}>
+          ⚠️ {loadError} — données locales utilisées
+        </div>
+      )}
+
+      {/* ── TAB BAR iOS ── */}
+      <nav className="tab-bar">
+        <div style={{ position:"absolute", top:"3px", right:"10px", fontSize:"9px", color:"#94a3b8" }}>{APP_VERSION}</div>
+        {[
+          { id:"profiles", icon:"👤", label:"Profils" },
+          { id:"meals",    icon:"🍽️", label:"Plats" },
+          { id:"tonight",  icon:"🌙", label:"Ce soir" },
+          { id:"shopping", icon:"🛒", label:"Courses" },
+        ].map(t => (
+          <button key={t.id} className={`tab-btn ${tab===t.id?"active":""}`} onClick={()=>setTab(t.id)}>
+            <span className="tab-icon">{t.icon}</span>
+            <span>{t.label}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>

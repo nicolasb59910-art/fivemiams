@@ -1,0 +1,1312 @@
+{
+  "members": [
+    {
+      "id": "g1",
+      "name": "Iris",
+      "age": 11,
+      "color": "#f472b6",
+      "emoji": "👧"
+    },
+    {
+      "id": "g2",
+      "name": "Alice",
+      "age": 12,
+      "color": "#a78bfa",
+      "emoji": "👧"
+    },
+    {
+      "id": "g3",
+      "name": "Léa",
+      "age": 16,
+      "color": "#34d399",
+      "emoji": "👧"
+    },
+    {
+      "id": "g4",
+      "name": "Nicolas",
+      "age": null,
+      "color": "#38bdf8",
+      "emoji": "👨"
+    },
+    {
+      "id": "g5",
+      "name": "Charlotte",
+      "age": null,
+      "color": "#fb923c",
+      "emoji": "👩"
+    }
+  ],
+  "mealPrefs": {
+    "1": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "2": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "3": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "bof"
+    },
+    "4": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "5": {
+      "g1": "bof",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "no"
+    },
+    "6": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "no"
+    },
+    "7": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "no",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "8": {
+      "g1": "bof",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "10": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "11": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "12": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "13": {
+      "g1": "no",
+      "g2": "bof",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "14": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "15": {
+      "g1": "bof",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "16": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "yes"
+    },
+    "17": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "18": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "bof"
+    },
+    "19": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "20": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "bof"
+    },
+    "30": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "31": {
+      "g1": "yes",
+      "g2": "bof",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "32": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "bof"
+    },
+    "33": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "34": {
+      "g1": "bof",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "35": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "yes"
+    },
+    "36": {
+      "g1": "bof",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "bof"
+    },
+    "40": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "no"
+    },
+    "41": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "bof",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "42": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "43": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "44": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "45": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "46": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "bof"
+    },
+    "50": {
+      "g1": "bof",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "no"
+    },
+    "51": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "no",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "52": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "no",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "53": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "bof",
+      "g5": "no",
+      "g3": "no"
+    },
+    "54": {
+      "g1": "yes",
+      "g2": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "55": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "56": {
+      "g1": "yes",
+      "g2": "bof",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "no"
+    },
+    "57": {
+      "g1": "yes",
+      "g2": "bof",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "58": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "bof",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "60": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "61": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "62": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "no"
+    },
+    "63": {
+      "g1": "bof",
+      "g2": "yes",
+      "g4": "bof",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "70": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "71": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "72": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "73": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "74": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "75": {
+      "g1": "no",
+      "g2": "bof",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "76": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "77": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "80": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "81": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "82": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "bof"
+    },
+    "83": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "84": {
+      "g1": "bof",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "85": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "86": {
+      "g1": "yes",
+      "g2": "yes",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "90": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "91": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "bof"
+    },
+    "92": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "yes"
+    },
+    "93": {
+      "g1": "yes",
+      "g2": "bof",
+      "g4": "yes",
+      "g5": "bof",
+      "g3": "yes"
+    },
+    "94": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "no"
+    },
+    "95": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "yes",
+      "g3": "bof"
+    },
+    "96": {
+      "g1": "yes",
+      "g2": "no",
+      "g4": "yes",
+      "g5": "no",
+      "g3": "no"
+    }
+  },
+  "ingPrefs": {
+    "g1": {
+      "Pomme": "yes",
+      "Poire": "yes",
+      "Banane": "yes",
+      "Orange": "bof",
+      "Mandarine": "yes",
+      "Fraise": "yes",
+      "Framboise": "yes",
+      "Cerise": "yes",
+      "Raisin": "bof",
+      "Pastèque": "yes",
+      "Melon": "yes",
+      "Pêche": "yes",
+      "Abricot": "yes",
+      "Prune": "yes",
+      "Kiwi": "no",
+      "Mangue": "yes",
+      "Ananas": "no",
+      "Myrtille": "bof",
+      "Figue": "yes",
+      "Grenade": "no",
+      "Tomate": "yes",
+      "Concombre": "yes",
+      "Carotte": "yes",
+      "Radis": "yes",
+      "Salade verte": "yes",
+      "Mâche": "no",
+      "Roquette": "no",
+      "Céleri": "yes",
+      "Fenouil": "no",
+      "Poivron": "yes",
+      "Avocat": "yes",
+      "Maïs": "yes",
+      "Betterave": "yes",
+      "Chou-fleur cru": "yes",
+      "Brocoli cru": "yes",
+      "Épinards": "no",
+      "Haricots verts": "yes",
+      "Petits pois": "yes",
+      "Brocoli": "yes",
+      "Courgette": "yes",
+      "Aubergine": "yes",
+      "Chou": "yes",
+      "Poireau": "yes",
+      "Chou-fleur": "yes",
+      "Champignons": "yes",
+      "Épinards cuits": "yes",
+      "Asperges": "yes",
+      "Artichaut": "no",
+      "Potiron": "yes",
+      "Navet": "bof",
+      "Pomme de terre": "yes",
+      "Patate douce": "yes",
+      "Lentilles": "yes",
+      "Pois chiches": "yes",
+      "Flageolets": "yes",
+      "Ail": "yes",
+      "Oignon": "yes",
+      "Échalote": "yes",
+      "Persil": "bof",
+      "Basilic": "yes",
+      "Menthe": "yes",
+      "Coriandre": "yes",
+      "Thym": "yes",
+      "Citron": "yes",
+      "Olive": "yes",
+      "Câpres": "bof",
+      "Poulet": "yes",
+      "Steak haché": "yes",
+      "Côtelette": "yes",
+      "Jambon": "yes",
+      "Lardons": "yes",
+      "Merguez": "yes",
+      "Saucisse": "yes",
+      "Thon": "yes",
+      "Saumon": "yes",
+      "Cabillaud": "yes",
+      "Crevettes": "bof",
+      "Sardine": "no",
+      "Œufs": "yes",
+      "Fromage râpé": "yes",
+      "Emmental": "yes",
+      "Camembert": "yes",
+      "Brie": "yes",
+      "Chèvre": "yes",
+      "Mozzarella": "yes",
+      "Crème fraîche": "yes",
+      "Lait": "yes",
+      "Beurre": "yes",
+      "Yaourt": "yes",
+      "Pâtes": "yes",
+      "Riz": "yes",
+      "Pain": "bof",
+      "Semoule": "yes",
+      "Pommes de terre": "yes",
+      "Quinoa": "yes",
+      "Boulgour": "yes",
+      "Pâte à pizza": "yes",
+      "Pain de mie": "yes",
+      "Tortillas": "yes",
+      "Sauce tomate": "yes",
+      "Ketchup": "yes",
+      "Moutarde": "yes",
+      "Mayonnaise": "yes",
+      "Sauce soja": "yes",
+      "Huile d'olive": "yes",
+      "Vinaigre": "yes",
+      "Lait de coco": "yes",
+      "Curry": "bof",
+      "Paprika": "yes"
+    },
+    "g2": {
+      "Pomme": "yes",
+      "Poire": "yes",
+      "Banane": "yes",
+      "Orange": "no",
+      "Mandarine": "yes",
+      "Fraise": "yes",
+      "Framboise": "yes",
+      "Cerise": "yes",
+      "Raisin": "yes",
+      "Pastèque": "yes",
+      "Melon": "yes",
+      "Pêche": "yes",
+      "Abricot": "yes",
+      "Prune": "yes",
+      "Kiwi": "yes",
+      "Mangue": "yes",
+      "Ananas": "no",
+      "Myrtille": "yes",
+      "Figue": "yes",
+      "Grenade": "yes",
+      "Concombre": "yes",
+      "Tomate": "yes",
+      "Carotte": "yes",
+      "Radis": "yes",
+      "Salade verte": "yes",
+      "Mâche": "yes",
+      "Roquette": "yes",
+      "Céleri": "bof",
+      "Fenouil": "bof",
+      "Poivron": "yes",
+      "Avocat": "yes",
+      "Maïs": "no",
+      "Betterave": "yes",
+      "Chou-fleur cru": "yes",
+      "Brocoli cru": "yes",
+      "Épinards": "no",
+      "Haricots verts": "yes",
+      "Petits pois": "no",
+      "Brocoli": "yes",
+      "Courgette": "yes",
+      "Aubergine": "bof",
+      "Poireau": "no",
+      "Chou": "yes",
+      "Chou-fleur": "yes",
+      "Champignons": "yes",
+      "Épinards cuits": "no",
+      "Asperges": "no",
+      "Artichaut": "bof",
+      "Potiron": "yes",
+      "Navet": "no",
+      "Pomme de terre": "yes",
+      "Patate douce": "no",
+      "Lentilles": "bof",
+      "Pois chiches": "yes",
+      "Flageolets": "no",
+      "Ail": "yes",
+      "Oignon": "yes",
+      "Échalote": "yes",
+      "Persil": "yes",
+      "Basilic": "yes",
+      "Menthe": "no",
+      "Coriandre": "yes",
+      "Thym": "yes",
+      "Citron": "bof",
+      "Poulet": "bof",
+      "Steak haché": "yes",
+      "Côtelette": "yes",
+      "Jambon": "yes",
+      "Lardons": "yes",
+      "Saucisse": "yes",
+      "Thon": "no",
+      "Merguez": "yes",
+      "Saumon": "yes",
+      "Cabillaud": "no",
+      "Crevettes": "no",
+      "Sardine": "no",
+      "Œufs": "yes",
+      "Fromage râpé": "yes",
+      "Emmental": "yes",
+      "Camembert": "no",
+      "Brie": "no",
+      "Chèvre": "no",
+      "Mozzarella": "yes",
+      "Crème fraîche": "yes",
+      "Yaourt": "yes",
+      "Lait": "no",
+      "Beurre": "yes",
+      "Pâtes": "yes",
+      "Riz": "yes",
+      "Pain": "yes",
+      "Pommes de terre": "yes",
+      "Semoule": "yes",
+      "Quinoa": "yes",
+      "Boulgour": "yes",
+      "Pâte à pizza": "yes",
+      "Pain de mie": "yes",
+      "Tortillas": "yes",
+      "Sauce tomate": "yes",
+      "Ketchup": "yes",
+      "Moutarde": "yes",
+      "Mayonnaise": "yes",
+      "Sauce soja": "yes",
+      "Huile d'olive": "yes",
+      "Vinaigre": "yes",
+      "Lait de coco": "yes",
+      "Curry": "yes",
+      "Paprika": "yes"
+    },
+    "g4": {
+      "Pomme": "yes",
+      "Poire": "yes",
+      "Banane": "yes",
+      "Orange": "yes",
+      "Mandarine": "yes",
+      "Fraise": "yes",
+      "Framboise": "yes",
+      "Cerise": "yes",
+      "Raisin": "yes",
+      "Pastèque": "bof",
+      "Melon": "yes",
+      "Pêche": "yes",
+      "Abricot": "yes",
+      "Prune": "yes",
+      "Kiwi": "yes",
+      "Mangue": "yes",
+      "Ananas": "yes",
+      "Myrtille": "yes",
+      "Figue": "yes",
+      "Grenade": "bof",
+      "Tomate": "yes",
+      "Concombre": "yes",
+      "Carotte": "yes",
+      "Radis": "yes",
+      "Salade verte": "yes",
+      "Mâche": "yes",
+      "Roquette": "yes",
+      "Céleri": "no",
+      "Fenouil": "bof",
+      "Poivron": "yes",
+      "Avocat": "bof",
+      "Maïs": "yes",
+      "Betterave": "no",
+      "Chou-fleur cru": "no",
+      "Brocoli cru": "no",
+      "Épinards": "no",
+      "Haricots verts": "yes",
+      "Petits pois": "yes",
+      "Brocoli": "no",
+      "Courgette": "no",
+      "Aubergine": "no",
+      "Poireau": "bof",
+      "Chou": "no",
+      "Chou-fleur": "no",
+      "Champignons": "no",
+      "Épinards cuits": "no",
+      "Asperges": "yes",
+      "Artichaut": "yes",
+      "Potiron": "yes",
+      "Navet": "no",
+      "Pomme de terre": "yes",
+      "Patate douce": "yes",
+      "Lentilles": "yes",
+      "Pois chiches": "yes",
+      "Flageolets": "yes",
+      "Ail": "yes",
+      "Oignon": "yes",
+      "Échalote": "yes",
+      "Persil": "yes",
+      "Basilic": "yes",
+      "Menthe": "yes",
+      "Coriandre": "yes",
+      "Olive": "yes",
+      "Citron": "yes",
+      "Thym": "yes",
+      "Câpres": "bof",
+      "Poulet": "yes",
+      "Steak haché": "yes",
+      "Côtelette": "yes",
+      "Jambon": "yes",
+      "Lardons": "yes",
+      "Merguez": "yes",
+      "Saucisse": "yes",
+      "Saumon": "yes",
+      "Thon": "yes",
+      "Cabillaud": "yes",
+      "Crevettes": "yes",
+      "Sardine": "yes",
+      "Œufs": "yes",
+      "Fromage râpé": "yes",
+      "Emmental": "yes",
+      "Camembert": "yes",
+      "Brie": "yes",
+      "Chèvre": "yes",
+      "Mozzarella": "yes",
+      "Yaourt": "yes",
+      "Crème fraîche": "yes",
+      "Lait": "yes",
+      "Beurre": "yes",
+      "Pâtes": "yes",
+      "Riz": "yes",
+      "Pain": "yes",
+      "Pommes de terre": "yes",
+      "Semoule": "yes",
+      "Quinoa": "yes",
+      "Boulgour": "yes",
+      "Pâte à pizza": "yes",
+      "Pain de mie": "yes",
+      "Tortillas": "yes",
+      "Sauce tomate": "yes",
+      "Ketchup": "yes",
+      "Moutarde": "bof",
+      "Mayonnaise": "yes",
+      "Sauce soja": "yes",
+      "Huile d'olive": "yes",
+      "Vinaigre": "yes",
+      "Lait de coco": "yes",
+      "Curry": "yes",
+      "Paprika": "yes"
+    },
+    "g5": {
+      "Pomme": "yes",
+      "Poire": "yes",
+      "Banane": "yes",
+      "Orange": "yes",
+      "Mandarine": "yes",
+      "Fraise": "yes",
+      "Raisin": "yes",
+      "Cerise": "yes",
+      "Framboise": "yes",
+      "Pastèque": "yes",
+      "Melon": "yes",
+      "Pêche": "yes",
+      "Mangue": "yes",
+      "Kiwi": "yes",
+      "Prune": "yes",
+      "Abricot": "yes",
+      "Ananas": "yes",
+      "Myrtille": "yes",
+      "Grenade": "yes",
+      "Figue": "yes",
+      "Tomate": "yes",
+      "Concombre": "yes",
+      "Carotte": "yes",
+      "Mâche": "yes",
+      "Salade verte": "bof",
+      "Radis": "yes",
+      "Roquette": "yes",
+      "Céleri": "yes",
+      "Fenouil": "yes",
+      "Betterave": "yes",
+      "Maïs": "yes",
+      "Avocat": "yes",
+      "Poivron": "yes",
+      "Chou-fleur cru": "yes",
+      "Épinards": "yes",
+      "Brocoli cru": "yes",
+      "Haricots verts": "yes",
+      "Petits pois": "yes",
+      "Brocoli": "yes",
+      "Poireau": "yes",
+      "Champignons": "yes",
+      "Chou-fleur": "yes",
+      "Aubergine": "yes",
+      "Courgette": "yes",
+      "Chou": "yes",
+      "Épinards cuits": "yes",
+      "Asperges": "yes",
+      "Artichaut": "yes",
+      "Pomme de terre": "bof",
+      "Navet": "yes",
+      "Potiron": "yes",
+      "Patate douce": "yes",
+      "Lentilles": "yes",
+      "Pois chiches": "yes",
+      "Flageolets": "bof",
+      "Ail": "yes",
+      "Oignon": "yes",
+      "Persil": "yes",
+      "Échalote": "yes",
+      "Coriandre": "yes",
+      "Menthe": "yes",
+      "Basilic": "yes",
+      "Thym": "yes",
+      "Citron": "yes",
+      "Poulet": "yes",
+      "Steak haché": "yes",
+      "Côtelette": "bof",
+      "Jambon": "yes",
+      "Lardons": "no",
+      "Merguez": "yes",
+      "Saucisse": "yes",
+      "Thon": "yes",
+      "Saumon": "yes",
+      "Sardine": "yes",
+      "Crevettes": "yes",
+      "Cabillaud": "bof",
+      "Œufs": "yes",
+      "Fromage râpé": "yes",
+      "Emmental": "yes",
+      "Chèvre": "yes",
+      "Camembert": "yes",
+      "Mozzarella": "yes",
+      "Brie": "yes",
+      "Crème fraîche": "no",
+      "Yaourt": "yes",
+      "Beurre": "yes",
+      "Lait": "bof",
+      "Pâtes": "yes",
+      "Riz": "yes",
+      "Pain": "yes",
+      "Pommes de terre": "bof",
+      "Semoule": "bof",
+      "Quinoa": "yes",
+      "Boulgour": "yes",
+      "Pâte à pizza": "yes",
+      "Pain de mie": "bof",
+      "Tortillas": "bof",
+      "Mayonnaise": "no",
+      "Huile d'olive": "yes",
+      "Moutarde": "yes",
+      "Ketchup": "yes",
+      "Sauce tomate": "yes",
+      "Sauce soja": "yes",
+      "Vinaigre": "yes",
+      "Lait de coco": "yes",
+      "Curry": "yes",
+      "Paprika": "yes",
+      "Olive": "yes",
+      "Câpres": "yes"
+    },
+    "g3": {}
+  },
+  "meals": [
+    {
+      "id": 1,
+      "name": "Pâtes bolognaise",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 2,
+      "name": "Lasagnes",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 3,
+      "name": "Pennes à la crème",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 4,
+      "name": "Tagliatelles saumon",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 5,
+      "name": "Riz cantonnais",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 6,
+      "name": "Risotto parmesan",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 7,
+      "name": "Risotto champignons",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 8,
+      "name": "Nouilles sautées",
+      "cat": "🍝 Pâtes & riz"
+    },
+    {
+      "id": 10,
+      "name": "Poulet rôti",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 11,
+      "name": "Poulet basquaise",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 12,
+      "name": "Poulet au curry",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 13,
+      "name": "Poulet citron-thym",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 14,
+      "name": "Steak frites",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 15,
+      "name": "Boulettes sauce tomate",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 16,
+      "name": "Côtelettes grillées",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 17,
+      "name": "Hachis parmentier",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 18,
+      "name": "Blanquette de veau",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 19,
+      "name": "Bœuf bourguignon",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 20,
+      "name": "Merguez grillées",
+      "cat": "🥩 Viandes"
+    },
+    {
+      "id": 30,
+      "name": "Saumon grillé",
+      "cat": "🐟 Poissons"
+    },
+    {
+      "id": 31,
+      "name": "Saumon en papillote",
+      "cat": "🐟 Poissons"
+    },
+    {
+      "id": 32,
+      "name": "Cabillaud beurre blanc",
+      "cat": "🐟 Poissons"
+    },
+    {
+      "id": 33,
+      "name": "Poisson pané",
+      "cat": "🐟 Poissons"
+    },
+    {
+      "id": 34,
+      "name": "Crevettes sautées à l'ail",
+      "cat": "🐟 Poissons"
+    },
+    {
+      "id": 35,
+      "name": "Thon à la provençale",
+      "cat": "🐟 Poissons"
+    },
+    {
+      "id": 36,
+      "name": "Brandade de morue",
+      "cat": "🐟 Poissons"
+    },
+    {
+      "id": 40,
+      "name": "Quiche lorraine",
+      "cat": "🥧 Tartes & quiches"
+    },
+    {
+      "id": 41,
+      "name": "Quiche saumon épinards",
+      "cat": "🥧 Tartes & quiches"
+    },
+    {
+      "id": 42,
+      "name": "Tarte à la tomate",
+      "cat": "🥧 Tartes & quiches"
+    },
+    {
+      "id": 43,
+      "name": "Tarte poireaux-chèvre",
+      "cat": "🥧 Tartes & quiches"
+    },
+    {
+      "id": 44,
+      "name": "Flamiche aux poireaux",
+      "cat": "🥧 Tartes & quiches"
+    },
+    {
+      "id": 45,
+      "name": "Pizza maison",
+      "cat": "🥧 Tartes & quiches"
+    },
+    {
+      "id": 46,
+      "name": "Pizza 4 fromages",
+      "cat": "🥧 Tartes & quiches"
+    },
+    {
+      "id": 50,
+      "name": "Gratin dauphinois",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 51,
+      "name": "Gratin de courgettes",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 52,
+      "name": "Gratin de brocolis",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 53,
+      "name": "Ratatouille",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 54,
+      "name": "Poêlée de légumes",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 55,
+      "name": "Purée maison",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 56,
+      "name": "Soupe de légumes",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 57,
+      "name": "Velouté de butternut",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 58,
+      "name": "Minestrone",
+      "cat": "🥦 Légumes & gratins"
+    },
+    {
+      "id": 60,
+      "name": "Omelette garnie",
+      "cat": "🍳 Œufs"
+    },
+    {
+      "id": 61,
+      "name": "Œufs cocotte",
+      "cat": "🍳 Œufs"
+    },
+    {
+      "id": 62,
+      "name": "Frittata légumes",
+      "cat": "🍳 Œufs"
+    },
+    {
+      "id": 63,
+      "name": "Shakshuka",
+      "cat": "🍳 Œufs"
+    },
+    {
+      "id": 70,
+      "name": "Tacos maison",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 71,
+      "name": "Fajitas poulet",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 72,
+      "name": "Wok de bœuf",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 73,
+      "name": "Bol Buddha",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 74,
+      "name": "Pad thaï",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 75,
+      "name": "Tajine poulet citron",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 76,
+      "name": "Couscous royal",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 77,
+      "name": "Chili con carne",
+      "cat": "🌍 Du monde"
+    },
+    {
+      "id": 80,
+      "name": "Croque-monsieur",
+      "cat": "⚡ Rapide & snack"
+    },
+    {
+      "id": 81,
+      "name": "Hot-dogs",
+      "cat": "⚡ Rapide & snack"
+    },
+    {
+      "id": 82,
+      "name": "Tartines gratinées",
+      "cat": "⚡ Rapide & snack"
+    },
+    {
+      "id": 83,
+      "name": "Wrap poulet salade",
+      "cat": "⚡ Rapide & snack"
+    },
+    {
+      "id": 84,
+      "name": "Salade niçoise",
+      "cat": "⚡ Rapide & snack"
+    },
+    {
+      "id": 85,
+      "name": "Salade César",
+      "cat": "⚡ Rapide & snack"
+    },
+    {
+      "id": 86,
+      "name": "Burger maison",
+      "cat": "⚡ Rapide & snack"
+    },
+    {
+      "id": 90,
+      "name": "Filet de bar beurre blanc",
+      "cat": "✨ Raffiné"
+    },
+    {
+      "id": 91,
+      "name": "Magret de canard",
+      "cat": "✨ Raffiné"
+    },
+    {
+      "id": 92,
+      "name": "Noix de Saint-Jacques",
+      "cat": "✨ Raffiné"
+    },
+    {
+      "id": 93,
+      "name": "Saumon sauce hollandaise",
+      "cat": "✨ Raffiné"
+    },
+    {
+      "id": 94,
+      "name": "Tarte tatin aux légumes",
+      "cat": "✨ Raffiné"
+    },
+    {
+      "id": 95,
+      "name": "Filet mignon en croûte",
+      "cat": "✨ Raffiné"
+    },
+    {
+      "id": 96,
+      "name": "Parmentier de canard",
+      "cat": "✨ Raffiné"
+    }
+  ],
+  "cartItems": [],
+  "presentIds": [
+    "g1",
+    "g2",
+    "g3",
+    "g4",
+    "g5"
+  ],
+  "exportedAt": "2026-06-14T13:00:00.000Z"
+}

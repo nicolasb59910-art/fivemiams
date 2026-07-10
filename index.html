@@ -583,70 +583,324 @@ function App() {
     return { meals: matchedMeals, ings: matchedIngs };
   };
 
-  // ── Chat IA ──
-  const buildFamilyContext = () => {
-    let ctx = "MEMBRES DE LA FAMILLE :\n\n";
-    members.forEach(m => {
-      ctx += `── ${m.emoji} ${m.name} ──\n`;
-      // Plats
-      const liked = meals.filter(ml => getMealPref(ml.id, m.id) === "yes").map(ml => ml.name);
-      const bof = meals.filter(ml => getMealPref(ml.id, m.id) === "bof").map(ml => ml.name);
-      const disliked = meals.filter(ml => getMealPref(ml.id, m.id) === "no").map(ml => ml.name);
-      if (liked.length) ctx += `  Plats aimés : ${liked.join(", ")}\n`;
-      if (bof.length) ctx += `  Plats bof : ${bof.join(", ")}\n`;
-      if (disliked.length) ctx += `  Plats détestés : ${disliked.join(", ")}\n`;
-      // Ingrédients
-      const ingData = ingPrefs[m.id] || {};
-      const ingNo = Object.entries(ingData).filter(([,v]) => v === "no").map(([k]) => k);
-      const ingBof = Object.entries(ingData).filter(([,v]) => v === "bof").map(([k]) => k);
-      const ingYes = Object.entries(ingData).filter(([,v]) => v === "yes").map(([k]) => k);
-      if (ingNo.length) ctx += `  ⚠️ INGRÉDIENTS DÉTESTÉS : ${ingNo.join(", ")}\n`;
-      if (ingBof.length) ctx += `  😐 Ingrédients bof : ${ingBof.join(", ")}\n`;
-      if (ingYes.length) ctx += `  Ingrédients OK : ${ingYes.join(", ")}\n`;
-      ctx += "\n";
-    });
-    return ctx;
+  // ── Assistant local intelligent ──
+  const analyzeQuestion = (q) => {
+    const ql = q.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const allIngs = Object.values(INGREDIENT_CATS).flat();
+    const allIngsNorm = allIngs.map(i => ({ orig: i, norm: i.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") }));
+
+    // Trouver les ingrédients mentionnés
+    const mentionedIngs = allIngsNorm.filter(i => ql.includes(i.norm)).map(i => i.orig);
+
+    // Trouver les plats mentionnés
+    const mentionedMeals = meals.filter(m => ql.includes(m.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")));
+
+    // Détecter les membres mentionnés
+    const mentionedMembers = members.filter(m => ql.includes(m.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")));
+    const absentMembers = mentionedMembers.length > 0 && (ql.includes("pas la") || ql.includes("absent") || ql.includes("sans") || ql.includes("pas là") || ql.includes("n'est pas"));
+    const presentForCalc = absentMembers
+      ? members.filter(m => !mentionedMembers.find(mm => mm.id === m.id)).map(m => m.id)
+      : allIds;
+
+    let response = "";
+
+    // ── Analyse d'un plat de la liste ──
+    if (mentionedMeals.length > 0) {
+      mentionedMeals.forEach(meal => {
+        const d = getDecision(meal, presentForCalc);
+        const cfg = decisionCfg(d);
+        const prefs = members.filter(m => presentForCalc.includes(m.id)).map(m => ({
+          name: m.name, emoji: m.emoji, pref: getMealPref(meal.id, m.id)
+        }));
+        const nos = prefs.filter(p => p.pref === "no");
+        const bofs = prefs.filter(p => p.pref === "bof");
+        const yes = prefs.filter(p => p.pref === "yes");
+
+        response += `🍽️ **${meal.name}** → ${cfg.label}\n\n`;
+        if (yes.length) response += `😊 Aiment : ${yes.map(p => p.name).join(", ")}\n`;
+        if (bofs.length) response += `😐 Bof : ${bofs.map(p => p.name).join(", ")}\n`;
+        if (nos.length) response += `🙅 N'aiment pas : ${nos.map(p => p.name).join(", ")}\n`;
+        response += "\n";
+      });
+    }
+
+    // ── Analyse d'ingrédients ──
+    if (mentionedIngs.length > 0) {
+      mentionedIngs.forEach(ing => {
+        const prefs = members.map(m => ({ name: m.name, emoji: m.emoji, pref: getIngPref(m.id, ing) }));
+        const nos = prefs.filter(p => p.pref === "no");
+        const bofs = prefs.filter(p => p.pref === "bof");
+
+        response += `🥕 **${ing}** : `;
+        if (nos.length === 0 && bofs.length === 0) {
+          response += "tout le monde aime ! ✅\n";
+        } else {
+          if (nos.length) response += `⚠️ ${nos.map(p => p.name).join(", ")} n'aime${nos.length>1?"nt":""} pas. `;
+          if (bofs.length) response += `😐 ${bofs.map(p => p.name).join(", ")} = bof. `;
+          response += "\n";
+        }
+      });
+      response += "\n";
+    }
+
+    // ── Analyse d'un plat inconnu (pas dans la liste) — deviner les ingrédients ──
+    if (mentionedMeals.length === 0 && mentionedIngs.length === 0) {
+      // Essayer de deviner des ingrédients dans la question
+      const commonIngMap = {
+        // ── Pâtes ──
+        "bolognaise": ["Pâtes","Steak haché","Sauce tomate","Oignon","Ail","Carotte"],
+        "carbonara": ["Pâtes","Lardons","Crème fraîche","Œufs","Fromage râpé"],
+        "lasagne": ["Pâtes","Steak haché","Sauce tomate","Fromage râpé","Crème fraîche"],
+        "penne": ["Pâtes","Crème fraîche","Fromage râpé"],
+        "tagliatelle": ["Pâtes","Saumon","Crème fraîche"],
+        "spaghetti": ["Pâtes","Sauce tomate","Ail"],
+        "pesto": ["Pâtes","Basilic","Ail","Fromage râpé","Huile d'olive"],
+        "ravioli": ["Pâtes","Fromage râpé","Sauce tomate"],
+        "gnocchi": ["Pomme de terre","Fromage râpé","Sauce tomate","Beurre"],
+        "mac and cheese": ["Pâtes","Fromage râpé","Crème fraîche","Beurre","Lait"],
+        "coquillettes": ["Pâtes","Jambon","Fromage râpé","Beurre"],
+        "gratin de pates": ["Pâtes","Fromage râpé","Crème fraîche","Jambon"],
+        "pates au thon": ["Pâtes","Thon","Sauce tomate","Oignon"],
+        // ── Riz ──
+        "risotto": ["Riz","Crème fraîche","Fromage râpé","Oignon","Beurre"],
+        "riz cantonnais": ["Riz","Œufs","Jambon","Petits pois","Oignon"],
+        "paella": ["Riz","Poulet","Crevettes","Poivron","Tomate","Petits pois"],
+        "biryani": ["Riz","Poulet","Oignon","Curry","Yaourt"],
+        "riz au lait": ["Riz","Lait","Beurre"],
+        "poke bowl": ["Riz","Saumon","Avocat","Concombre","Sauce soja"],
+        "bibimbap": ["Riz","Steak haché","Œufs","Carotte","Courgette","Sauce soja"],
+        // ── Viandes ──
+        "poulet": ["Poulet"],
+        "poulet roti": ["Poulet","Pommes de terre","Ail","Thym"],
+        "poulet pane": ["Poulet","Œufs","Pain"],
+        "nuggets": ["Poulet","Œufs","Pain"],
+        "escalope": ["Poulet","Œufs","Crème fraîche"],
+        "cordon bleu": ["Poulet","Jambon","Fromage râpé","Œufs"],
+        "steak": ["Steak haché","Pommes de terre"],
+        "steak frites": ["Steak haché","Pommes de terre"],
+        "boulettes": ["Steak haché","Oignon","Œufs","Sauce tomate"],
+        "hachis": ["Steak haché","Pomme de terre","Oignon","Fromage râpé"],
+        "parmentier": ["Steak haché","Pomme de terre","Oignon","Crème fraîche"],
+        "blanquette": ["Poulet","Crème fraîche","Carotte","Champignons","Oignon"],
+        "bourguignon": ["Steak haché","Carotte","Champignons","Oignon"],
+        "pot au feu": ["Steak haché","Carotte","Poireau","Navet","Pomme de terre"],
+        "boeuf stroganoff": ["Steak haché","Champignons","Crème fraîche","Oignon"],
+        "osso buco": ["Steak haché","Tomate","Carotte","Oignon","Ail"],
+        "roti de porc": ["Côtelette","Pommes de terre","Ail","Thym"],
+        "cote de porc": ["Côtelette","Pommes de terre"],
+        "filet mignon": ["Côtelette","Crème fraîche","Champignons"],
+        "magret": ["Poulet","Pommes de terre","Miel"],
+        "canard": ["Poulet","Pommes de terre"],
+        "merguez": ["Merguez","Semoule"],
+        "saucisse": ["Saucisse","Pommes de terre","Lentilles"],
+        "hot dog": ["Saucisse","Pain","Ketchup","Moutarde"],
+        "choucroute": ["Saucisse","Chou","Pomme de terre"],
+        "kebab": ["Poulet","Salade verte","Tomate","Oignon"],
+        "shawarma": ["Poulet","Salade verte","Tomate","Oignon"],
+        // ── Poissons & fruits de mer ──
+        "saumon": ["Saumon","Citron"],
+        "saumon grille": ["Saumon","Citron","Riz"],
+        "papillote": ["Saumon","Citron","Courgette","Poireau"],
+        "poisson": ["Cabillaud","Citron","Beurre"],
+        "poisson pane": ["Cabillaud","Œufs","Citron"],
+        "fish and chips": ["Cabillaud","Pommes de terre","Œufs","Citron"],
+        "cabillaud": ["Cabillaud","Beurre","Citron"],
+        "brandade": ["Cabillaud","Pomme de terre","Crème fraîche","Ail"],
+        "crevettes": ["Crevettes","Ail","Beurre","Citron"],
+        "gambas": ["Crevettes","Ail","Huile d'olive","Citron"],
+        "moules": ["Crème fraîche","Oignon","Ail","Persil"],
+        "moules frites": ["Crème fraîche","Oignon","Pommes de terre"],
+        "sardine": ["Sardine","Citron","Huile d'olive"],
+        "thon": ["Thon","Tomate","Oignon"],
+        "tartare de saumon": ["Saumon","Avocat","Citron","Oignon"],
+        "ceviche": ["Saumon","Citron","Oignon","Coriandre","Avocat"],
+        "saint jacques": ["Beurre","Crème fraîche","Citron"],
+        "bar": ["Citron","Beurre","Fenouil"],
+        // ── Tartes & quiches ──
+        "quiche": ["Œufs","Crème fraîche","Fromage râpé","Lardons"],
+        "quiche lorraine": ["Œufs","Crème fraîche","Lardons","Fromage râpé"],
+        "tarte": ["Œufs","Crème fraîche","Beurre"],
+        "tarte tomate": ["Tomate","Mozzarella","Moutarde","Œufs"],
+        "flamiche": ["Poireau","Crème fraîche","Œufs","Beurre"],
+        "tourte": ["Steak haché","Œufs","Pomme de terre","Oignon"],
+        "pizza": ["Pâte à pizza","Sauce tomate","Mozzarella","Fromage râpé"],
+        "calzone": ["Pâte à pizza","Sauce tomate","Mozzarella","Jambon"],
+        "focaccia": ["Huile d'olive","Thym","Tomate"],
+        "croque": ["Pain de mie","Jambon","Fromage râpé","Beurre"],
+        "croque monsieur": ["Pain de mie","Jambon","Fromage râpé","Beurre"],
+        "croque madame": ["Pain de mie","Jambon","Fromage râpé","Œufs","Beurre"],
+        // ── Gratins & légumes ──
+        "gratin": ["Fromage râpé","Crème fraîche","Beurre","Pomme de terre"],
+        "gratin dauphinois": ["Pomme de terre","Crème fraîche","Fromage râpé","Ail"],
+        "gratin courgette": ["Courgette","Fromage râpé","Crème fraîche","Œufs"],
+        "gratin brocoli": ["Brocoli","Fromage râpé","Crème fraîche"],
+        "gratin chou fleur": ["Chou-fleur","Fromage râpé","Crème fraîche"],
+        "ratatouille": ["Courgette","Aubergine","Tomate","Poivron","Oignon"],
+        "moussaka": ["Aubergine","Steak haché","Sauce tomate","Fromage râpé","Crème fraîche"],
+        "legumes farcis": ["Tomate","Courgette","Steak haché","Riz","Oignon"],
+        "poivrons farcis": ["Poivron","Steak haché","Riz","Sauce tomate"],
+        "fondue": ["Fromage râpé","Emmental","Pain"],
+        "raclette": ["Pommes de terre","Fromage râpé","Jambon","Lardons","Cornichon"],
+        "tartiflette": ["Pomme de terre","Lardons","Oignon","Crème fraîche","Fromage râpé"],
+        "potee": ["Chou","Saucisse","Pomme de terre","Carotte"],
+        // ── Œufs ──
+        "omelette": ["Œufs","Fromage râpé"],
+        "frittata": ["Œufs","Courgette","Poivron","Fromage râpé"],
+        "shakshuka": ["Œufs","Tomate","Poivron","Oignon","Ail"],
+        "oeuf cocotte": ["Œufs","Crème fraîche"],
+        "oeuf brouille": ["Œufs","Beurre","Lait"],
+        "tortilla espagnole": ["Œufs","Pomme de terre","Oignon"],
+        // ── Soupes ──
+        "soupe": ["Pomme de terre","Carotte","Poireau","Oignon"],
+        "veloute": ["Pomme de terre","Crème fraîche","Beurre"],
+        "minestrone": ["Pâtes","Haricots verts","Tomate","Carotte","Courgette"],
+        "gaspacho": ["Tomate","Concombre","Poivron","Ail","Huile d'olive"],
+        "soupe a l oignon": ["Oignon","Fromage râpé","Pain","Beurre"],
+        "bouillon": ["Poulet","Carotte","Oignon","Poireau"],
+        // ── Du monde ──
+        "couscous": ["Semoule","Poulet","Merguez","Pois chiches","Courgette","Carotte","Navet"],
+        "tajine": ["Poulet","Citron","Pomme de terre","Oignon"],
+        "chili": ["Steak haché","Haricots verts","Sauce tomate","Poivron","Oignon"],
+        "chili con carne": ["Steak haché","Haricots verts","Sauce tomate","Poivron","Oignon","Ail"],
+        "tacos": ["Tortillas","Steak haché","Poivron","Sauce tomate","Fromage râpé"],
+        "fajitas": ["Tortillas","Poulet","Poivron","Oignon","Crème fraîche"],
+        "burrito": ["Tortillas","Steak haché","Riz","Fromage râpé","Sauce tomate","Avocat"],
+        "enchiladas": ["Tortillas","Poulet","Sauce tomate","Fromage râpé","Crème fraîche"],
+        "nachos": ["Tortillas","Fromage râpé","Sauce tomate","Avocat"],
+        "guacamole": ["Avocat","Tomate","Oignon","Citron","Coriandre"],
+        "pad thai": ["Pâtes","Crevettes","Sauce soja","Oignon","Œufs"],
+        "nems": ["Poulet","Carotte","Oignon","Sauce soja"],
+        "bo bun": ["Steak haché","Salade verte","Carotte","Menthe","Sauce soja","Concombre"],
+        "bobun": ["Steak haché","Salade verte","Carotte","Menthe","Sauce soja","Concombre"],
+        "ramen": ["Pâtes","Poulet","Œufs","Oignon","Sauce soja"],
+        "sushi": ["Riz","Saumon","Avocat","Concombre","Sauce soja"],
+        "maki": ["Riz","Saumon","Avocat","Concombre","Sauce soja"],
+        "wok": ["Sauce soja","Poulet","Poivron","Oignon","Carotte"],
+        "nouilles sautees": ["Pâtes","Poulet","Sauce soja","Poivron","Oignon"],
+        "fried rice": ["Riz","Œufs","Oignon","Sauce soja","Petits pois"],
+        "dim sum": ["Poulet","Sauce soja","Oignon"],
+        "samossa": ["Pomme de terre","Petits pois","Oignon","Curry"],
+        "tikka masala": ["Poulet","Sauce tomate","Crème fraîche","Curry","Oignon","Ail"],
+        "butter chicken": ["Poulet","Sauce tomate","Crème fraîche","Curry","Beurre"],
+        "naan": ["Pain","Ail","Beurre"],
+        "dahl": ["Lentilles","Tomate","Oignon","Ail","Curry","Lait de coco"],
+        "curry": ["Curry","Poulet","Lait de coco","Riz","Oignon"],
+        "thai": ["Lait de coco","Poulet","Curry","Citron","Coriandre"],
+        "colombo": ["Poulet","Curry","Lait de coco","Aubergine","Pomme de terre"],
+        "bol buddha": ["Riz","Avocat","Concombre","Carotte","Pois chiches","Salade verte"],
+        "falafel": ["Pois chiches","Persil","Oignon","Ail","Salade verte","Tomate"],
+        "houmous": ["Pois chiches","Ail","Citron","Huile d'olive"],
+        "taboulé": ["Semoule","Tomate","Concombre","Persil","Menthe","Citron"],
+        "boulgour": ["Boulgour","Tomate","Oignon","Persil"],
+        // ── Snacks & rapide ──
+        "burger": ["Steak haché","Pain","Salade verte","Tomate","Fromage râpé"],
+        "hamburger": ["Steak haché","Pain","Salade verte","Tomate","Ketchup"],
+        "wrap": ["Tortillas","Poulet","Salade verte","Tomate"],
+        "sandwich": ["Pain","Jambon","Salade verte","Tomate","Beurre"],
+        "panini": ["Pain","Jambon","Mozzarella","Tomate"],
+        "tartine": ["Pain","Fromage râpé","Jambon"],
+        "bruschetta": ["Pain","Tomate","Basilic","Huile d'olive","Ail"],
+        "salade": ["Salade verte","Tomate","Concombre"],
+        "salade nicoise": ["Salade verte","Thon","Tomate","Œufs","Haricots verts"],
+        "salade cesar": ["Salade verte","Poulet","Fromage râpé","Crème fraîche","Pain"],
+        "salade chevre chaud": ["Salade verte","Chèvre","Miel","Pain"],
+        "galette": ["Œufs","Jambon","Fromage râpé"],
+        "crepe": ["Œufs","Lait","Beurre","Fromage râpé","Jambon"],
+        "gaufre": ["Œufs","Lait","Beurre"],
+        // ── Plats traditionnels ──
+        "cassoulet": ["Saucisse","Lardons","Haricots verts","Tomate","Oignon"],
+        "petit sale": ["Lardons","Lentilles","Carotte","Oignon"],
+        "welsh": ["Fromage râpé","Pain","Jambon","Moutarde","Bière"],
+        "flamenkuche": ["Crème fraîche","Lardons","Oignon","Fromage râpé"],
+        "flammekueche": ["Crème fraîche","Lardons","Oignon","Fromage râpé"],
+        "vol au vent": ["Poulet","Champignons","Crème fraîche"],
+        "cordon bleu": ["Poulet","Jambon","Fromage râpé","Œufs"],
+        "endive au jambon": ["Jambon","Crème fraîche","Fromage râpé"],
+        "tomate farcie": ["Tomate","Steak haché","Riz","Oignon","Ail"],
+        "brandade de morue": ["Cabillaud","Pomme de terre","Crème fraîche","Ail"],
+        "gratin de poisson": ["Cabillaud","Crème fraîche","Fromage râpé","Pomme de terre"],
+        // ── Purées & accompagnements ──
+        "puree": ["Pomme de terre","Beurre","Lait","Crème fraîche"],
+        "frites": ["Pommes de terre","Huile d'olive"],
+        "riz pilaf": ["Riz","Oignon","Beurre"],
+        "semoule": ["Semoule","Beurre"],
+        "polenta": ["Maïs","Beurre","Fromage râpé"],
+      };
+
+      let guessedIngs = [];
+      for (const [keyword, ings] of Object.entries(commonIngMap)) {
+        if (ql.includes(keyword)) {
+          guessedIngs = [...new Set([...guessedIngs, ...ings])];
+        }
+      }
+
+      if (guessedIngs.length > 0) {
+        response += "🧑‍🍳 Pour ce plat, les ingrédients typiques seraient :\n\n";
+        let warnings = [];
+        let bofWarnings = [];
+        guessedIngs.forEach(ing => {
+          const prefs = members.map(m => ({ name: m.name, pref: getIngPref(m.id, ing) }));
+          const nos = prefs.filter(p => p.pref === "no");
+          const bofs = prefs.filter(p => p.pref === "bof");
+          if (nos.length) warnings.push(`⚠️ **${ing}** → ${nos.map(p=>p.name).join(", ")} n'aime${nos.length>1?"nt":""} pas`);
+          else if (bofs.length) bofWarnings.push(`😐 **${ing}** → ${bofs.map(p=>p.name).join(", ")} = bof`);
+        });
+        if (warnings.length) {
+          response += "🚨 Attention :\n" + warnings.join("\n") + "\n\n";
+        }
+        if (bofWarnings.length) {
+          response += "😐 À noter :\n" + bofWarnings.join("\n") + "\n\n";
+        }
+        if (!warnings.length && !bofWarnings.length) {
+          response += "✅ Tout le monde devrait aimer les ingrédients principaux !\n\n";
+        }
+      }
+    }
+
+    // ── Suggestion de plats ──
+    if (ql.includes("suggere") || ql.includes("suggest") || ql.includes("propose") || ql.includes("idee") || ql.includes("qu'est-ce qu'on") || ql.includes("quoi manger") || ql.includes("qu est ce qu on")) {
+      const goMeals = meals.filter(m => getDecision(m, presentForCalc) === "go");
+      const shuffled = goMeals.sort(() => Math.random() - 0.5).slice(0, 5);
+      if (shuffled.length) {
+        response += "🎯 Plats où tout le monde est OK :\n";
+        shuffled.forEach(m => { response += `  ✓ ${m.name}\n`; });
+        response += "\n";
+      } else {
+        response += "😅 Difficile de trouver un plat qui plaît à tout le monde dans cette configuration !\n";
+      }
+    }
+
+    // ── Qui aime / qui n'aime pas ──
+    if (ql.includes("qui aime") || ql.includes("qui deteste") || ql.includes("qui n'aime")) {
+      // Déjà traité par l'analyse d'ingrédients ci-dessus
+      if (!mentionedIngs.length && !mentionedMeals.length) {
+        response += "Dis-moi quel ingrédient ou plat t'intéresse et je te dirai qui aime ! 😊\n";
+      }
+    }
+
+    // Réponse par défaut
+    if (!response.trim()) {
+      response = "🤔 Je n'ai pas trouvé d'ingrédient ou de plat dans ta question. Essaie avec un nom de plat (couscous, pizza, curry...) ou un ingrédient (saumon, poireau, champignons...) !\n\n";
+      response += "💡 Tu peux aussi dire :\n";
+      response += '  • "Propose-moi des plats pour ce soir"\n';
+      response += '  • "J\'ai envie de faire un gratin"\n';
+      response += '  • "Qui aime les champignons ?"\n';
+    }
+
+    // Remplacer les ** par du texte simple (pas de markdown dans le chat)
+    return response.replace(/\*\*/g, "");
   };
 
-  const sendChatMessage = async () => {
+  const sendChatMessage = () => {
     if (!chatInput.trim() || chatLoading) return;
     const userMsg = chatInput.trim();
     setChatInput("");
     setChatMessages(prev => [...prev, { role: "user", text: userMsg }]);
-    setChatLoading(true);
-    try {
-      const response = await fetch("https://api.anthropic.com/v1/messages", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "claude-sonnet-4-6",
-          max_tokens: 1000,
-          system: `Tu es l'assistant culinaire de la famille FiveMiams. Tu réponds en français, de manière concise et sympathique, avec des emojis.
-
-Tu connais les goûts de chaque membre de la famille pour les plats ET les ingrédients.
-
-RÈGLES IMPORTANTES :
-- Quand on te propose un plat (même s'il n'est PAS dans la liste), analyse ses ingrédients typiques et préviens si quelqu'un n'aime pas un des ingrédients. Exemple : "Gratin de chou-fleur → ⚠️ Nico n'aime pas le chou-fleur"
-- Utilise les préférences d'ingrédients pour déduire si un nouveau plat plaira ou non à la famille
-- "no" = n'aime pas du tout, "bof" = moyen/acceptable, "yes" = aime
-- On cuisine si max 1 personne dit "no". Veto si 2+ disent "no".
-- Sois proactif : signale TOUJOURS les ingrédients problématiques même si on ne te le demande pas
-- Si on te demande des suggestions, propose des plats dont les ingrédients plaisent à tout le monde
-
-Voici les données complètes :\n\n${buildFamilyContext()}`,
-          messages: [
-            ...chatMessages.map(m => ({ role: m.role === "user" ? "user" : "assistant", content: m.text })),
-            { role: "user", content: userMsg }
-          ],
-        }),
-      });
-      const data = await response.json();
-      const reply = data.content?.[0]?.text || "Désolé, je n'ai pas pu répondre.";
+    // Réponse locale instantanée
+    setTimeout(() => {
+      const reply = analyzeQuestion(userMsg);
       setChatMessages(prev => [...prev, { role: "assistant", text: reply }]);
-    } catch (err) {
-      setChatMessages(prev => [...prev, { role: "assistant", text: "❌ Erreur de connexion à l'assistant IA." }]);
-    }
-    setChatLoading(false);
+    }, 300); // petit délai pour l'effet "réflexion"
   };
 
   const exportData = () => {
@@ -1244,7 +1498,7 @@ Voici les données complètes :\n\n${buildFamilyContext()}`,
 
               {/* ── Chat IA ── */}
               <div className="glass" style={{ padding:"14px" }}>
-                <div style={{ fontSize:"13px", fontWeight:"700", color:"#8b5cf6", marginBottom:"10px" }}>🤖 Demande à l'assistant IA</div>
+                <div style={{ fontSize:"13px", fontWeight:"700", color:"#f97316", marginBottom:"10px" }}>🧑‍🍳 Assistant culinaire familial</div>
 
                 {/* Messages */}
                 <div style={{ maxHeight:"350px", overflowY:"auto", marginBottom:"12px", display:"flex", flexDirection:"column", gap:"8px" }}>
@@ -1293,11 +1547,11 @@ Voici les données complètes :\n\n${buildFamilyContext()}`,
                     style={{ flex:1 }}
                   />
                   <button onClick={sendChatMessage} disabled={chatLoading || !chatInput.trim()} style={{
-                    background: chatInput.trim() ? "linear-gradient(135deg,#8b5cf6,#a78bfa)" : "rgba(203,213,225,.5)",
+                    background: chatInput.trim() ? "linear-gradient(135deg,#f97316,#fb923c)" : "rgba(203,213,225,.5)",
                     border:"none", borderRadius:"14px", color:"#fff",
                     padding:"10px 16px", cursor: chatInput.trim() ? "pointer" : "default",
                     fontWeight:"700", fontSize:"14px",
-                    boxShadow: chatInput.trim() ? "0 4px 14px rgba(139,92,246,.35)" : "none",
+                    boxShadow: chatInput.trim() ? "0 4px 14px rgba(249,115,22,.35)" : "none",
                   }}>➤</button>
                 </div>
               </div>

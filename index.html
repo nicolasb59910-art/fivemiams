@@ -300,7 +300,7 @@ const PREF_COLOR = { yes:"#059669", bof:"#d97706", no:"#dc2626", neutral:"#94a3b
 const PREF_BG    = { yes:"rgba(52,211,153,.18)", bof:"rgba(251,191,36,.18)", no:"rgba(248,113,113,.18)", neutral:"rgba(255,255,255,.7)" };
 const PREF_BORDER= { yes:"rgba(5,150,105,.5)", bof:"rgba(217,119,6,.5)", no:"rgba(220,38,38,.5)", neutral:"rgba(203,213,225,.8)" };
 
-const APP_VERSION = "v2.2";
+const APP_VERSION = "v2.3";
 
 function App() {
   const [tab,            setTab]           = useState("profiles");
@@ -351,14 +351,20 @@ function App() {
     fetch(`${JSONBIN_URL}/latest`, {
       headers: { 'X-Master-Key': JSONBIN_KEY },
     })
-      .then(r => r.json())
-      .then(res => {
-        const d = res.record || res;
+      .then(r => {
+        const status = r.status;
+        return r.json().then(body => ({ status, body }));
+      })
+      .then(({ status, body }) => {
+        const d = body.record || body;
         const remoteHasData = d && (
           (d.mealPrefs && Object.keys(d.mealPrefs).length > 0) ||
           (d.ingPrefs && Object.keys(d.ingPrefs).length > 0)
         );
         if (!remoteHasData) {
+          const keys = Object.keys(body||{}).join(",");
+          const hasRecord = !!body.record;
+          const recordKeys = body.record ? Object.keys(body.record).join(",") : "N/A";
           try {
             const raw = localStorage.getItem("menu-famille-v4");
             if (raw) {
@@ -370,11 +376,11 @@ function App() {
               if (ld.cartItems)  setCartItems(ld.cartItems);
               if (ld.presentIds) setPresentIds(ld.presentIds);
               if (ld.customIngs) setCustomIngs(ld.customIngs);
-              setLoadInfo("Cloud VIDE → localStorage utilisé");
+              setLoadInfo(`Cloud VIDE (status=${status}, keys=${keys}, record=${hasRecord}, recordKeys=${recordKeys}) → localStorage utilisé`);
             } else {
-              setLoadInfo("Cloud VIDE + localStorage VIDE");
+              setLoadInfo(`Cloud VIDE (status=${status}, keys=${keys}, record=${hasRecord}, recordKeys=${recordKeys}) + localStorage VIDE`);
             }
-          } catch(e) { setLoadInfo("Cloud VIDE + erreur localStorage"); }
+          } catch(e) { setLoadInfo(`Cloud VIDE (status=${status}) + erreur localStorage`); }
           setIsLoaded(true);
           return;
         }
@@ -389,7 +395,7 @@ function App() {
         const mp = Object.keys(d.mealPrefs||{}).length;
         const mids = new Set();
         Object.values(d.mealPrefs||{}).forEach(v => Object.keys(v).forEach(k => mids.add(k)));
-        setLoadInfo(`Cloud OK: ${mp} plats, ${mids.size} profils (${[...mids].join(",")})`);
+        setLoadInfo(`Cloud OK (status=${status}): ${mp} plats, ${mids.size} profils (${[...mids].join(",")})`);
         setIsLoaded(true);
       })
       .catch((err) => {
@@ -604,14 +610,24 @@ function App() {
           headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
           body: JSON.stringify(fullData),
         })
-          .then(r => r.json())
-          .then(() => {
-            setSaveStatus("saved");
-            setTimeout(()=>setSaveStatus(""), 2000);
-            alert("✅ Importé et sauvegardé pour toute la famille !");
+          .then(r => {
+            const status = r.status;
+            return r.json().then(body => ({ status, body }));
           })
-          .catch(() => {
-            alert("⚠️ Importé localement, mais la sauvegarde en ligne a échoué. Réessaie avec une connexion stable.");
+          .then(({ status, body }) => {
+            if (status === 200 && body.metadata) {
+              setSaveStatus("saved");
+              setTimeout(()=>setSaveStatus(""), 2000);
+              setLoadInfo(`Import OK → Cloud sauvegardé (status ${status})`);
+              alert("✅ Importé et sauvegardé pour toute la famille !");
+            } else {
+              setLoadInfo(`Import ERREUR: status=${status}, msg=${JSON.stringify(body).substring(0,100)}`);
+              alert("⚠️ JSONBin a répondu mais erreur : status " + status + "\n" + JSON.stringify(body).substring(0,200));
+            }
+          })
+          .catch((err) => {
+            setLoadInfo(`Import ECHEC: ${err.message}`);
+            alert("⚠️ Importé localement, mais la sauvegarde en ligne a échoué : " + err.message);
           });
       } catch(_) { alert("❌ Fichier invalide."); }
     };

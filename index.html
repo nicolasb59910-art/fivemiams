@@ -303,7 +303,7 @@ const PREF_BORDER= { yes:"rgba(5,150,105,.5)", bof:"rgba(217,119,6,.5)", no:"rgb
 const APP_VERSION = "v3.0";
 
 function App() {
-  const [tab,            setTab]           = useState("profiles");
+  const [tab,            setTab]           = useState("assistant");
   const [profileSubTab,  setProfileSubTab] = useState("plats");
   const [members,        setMembers]       = useState(MEMBERS_DEFAULT);
   const [mealPrefs,      setMealPrefs]     = useState({});
@@ -311,7 +311,7 @@ function App() {
   const [meals,          setMeals]         = useState(MEALS_DEFAULT);
   const [cartItems,      setCartItems]     = useState([]);
   const [customIngs,     setCustomIngs]    = useState({});
-  const [activeMember,   setActiveMember]  = useState("g1");
+  const [activeMember,   setActiveMember]  = useState("");
   const [mealCat,        setMealCat]       = useState("Tous");
   const [tonightCat,     setTonightCat]    = useState("Tous");
   const [ingCat,         setIngCat]        = useState(Object.keys(INGREDIENT_CATS_DEFAULT)[0]);
@@ -1094,45 +1094,101 @@ function App() {
         {/* ══ PROFILS ══ */}
         {tab==="profiles" && (
           <div className="fade-in">
-            <PageTitle icon="👤" title="Profils" sub="Note tes goûts une fois, c'est tout." />
+            <PageTitle icon="👤" title="Profils" sub="Sélectionne ton profil puis note tes goûts." />
             <div style={{ padding:"0 16px" }}>
 
-              {/* Sélecteur membre — style capsule horizontal */}
-              <div style={{ display:"flex", gap:"8px", overflowX:"auto", paddingBottom:"8px", marginBottom:"16px" }}>
-                {members.map((m,i) => {
-                  const active = activeMember===m.id;
+              {/* Sélecteur membre — menu déroulant sécurisé */}
+              <div className="glass-strong" style={{ padding:"16px", marginBottom:"16px" }}>
+                <div style={{ fontSize:"12px", fontWeight:"700", color:"#64748b", marginBottom:"8px", textTransform:"uppercase", letterSpacing:"1px" }}>Qui es-tu ?</div>
+                <select
+                  value={activeMember}
+                  onChange={e=>setActiveMember(e.target.value)}
+                  className="glass-input"
+                  style={{ width:"100%", fontSize:"16px", padding:"12px 16px", fontWeight:"700", color: activeMember ? (activeMemberObj||{}).color : "#64748b", borderColor: activeMember ? (activeMemberObj||{}).color : "rgba(203,213,225,.8)", borderWidth:"2px" }}
+                >
+                  <option value="">— Choisis ton profil —</option>
+                  {members.map(m => (
+                    <option key={m.id} value={m.id}>{m.emoji} {m.name} — {filledCount(m.id)}/{meals.length} plats notés</option>
+                  ))}
+                </select>
+
+                {/* Bannière de confirmation */}
+                {activeMember && activeMemberObj && (() => {
+                  const totalMeals = meals.length;
+                  const doneMeals = filledCount(activeMember);
+                  const pctMeals = Math.round((doneMeals / totalMeals) * 100);
+                  const totalIngs = Object.values(INGREDIENT_CATS).flat().length;
+                  const doneIngs = Object.keys(ingPrefs[activeMember]||{}).length;
+                  const pctIngs = Math.round((doneIngs / totalIngs) * 100);
+                  const pctTotal = Math.round(((doneMeals + doneIngs) / (totalMeals + totalIngs)) * 100);
+                  const barColor = pctTotal === 100 ? "#10b981" : pctTotal >= 70 ? "#f59e0b" : "#f97316";
                   return (
-                    <button key={m.id} onClick={()=>setActiveMember(m.id)} style={{
-                      background: active ? m.grad : "rgba(255,255,255,.85)",
-                      border: `2.5px solid ${active ? "#1e293b" : "rgba(203,213,225,.9)"}`,
-                      borderRadius:"100px", padding:"8px 16px", cursor:"pointer",
-                      display:"flex", alignItems:"center", gap:"7px", flexShrink:0,
-                      boxShadow: active ? `0 6px 22px ${m.color}88, 0 0 0 3px ${m.color}33` : "0 2px 6px rgba(100,116,139,.1)",
-                      transform: active ? "scale(1.05)" : "scale(1)",
-                      transition:"all .2s",
-                    }}>
-                      <span style={{ fontSize:"18px" }}>{m.emoji}</span>
-                      <div style={{ textAlign:"left" }}>
-                        {editingMember===m.id ? (
-                          <input autoFocus value={m.name}
-                            className="glass-input"
-                            onChange={e=>{ const nm=[...members]; nm[i]={...nm[i],name:e.target.value}; updMembers(nm); }}
-                            onBlur={()=>setEditingMember(null)}
-                            onClick={ev=>ev.stopPropagation()}
-                            style={{ width:"80px", padding:"2px 8px", fontSize:"12px" }}
-                          />
-                        ) : (
-                          <div style={{ fontWeight:"800", color:active?"#fff":m.color, fontSize:"13px" }}
-                            onDoubleClick={ev=>{ ev.stopPropagation(); setEditingMember(m.id); }}>
-                            {m.name}
+                    <div style={{ marginTop:"12px" }}>
+                      {/* Bannière membre */}
+                      <div style={{
+                        background: activeMemberObj.grad,
+                        borderRadius:"14px 14px 0 0", padding:"12px 16px",
+                        display:"flex", alignItems:"center", gap:"10px",
+                        boxShadow: `0 4px 16px ${activeMemberObj.color}55`,
+                      }}>
+                        <span style={{ fontSize:"28px" }}>{activeMemberObj.emoji}</span>
+                        <div style={{ flex:1 }}>
+                          <div style={{ fontWeight:"800", fontSize:"16px", color:"#fff" }}>Tu modifies les goûts de {activeMemberObj.name}</div>
+                          <div style={{ fontSize:"12px", color:"rgba(255,255,255,.85)" }}>
+                            {pctTotal === 100 ? "✅ Profil complet !" : `${pctTotal}% complété`}
                           </div>
-                        )}
-                        <div style={{ fontSize:"10px", color:active?"rgba(255,255,255,.85)":"#64748b", fontWeight:"600" }}>{filledCount(m.id)}/{meals.length}</div>
+                        </div>
                       </div>
-                    </button>
+                      {/* Barres de progression */}
+                      <div style={{
+                        background:"rgba(255,255,255,.9)", borderRadius:"0 0 14px 14px",
+                        padding:"12px 16px", border:"1px solid rgba(226,232,240,.8)", borderTop:"none",
+                      }}>
+                        {/* Barre globale */}
+                        <div style={{ marginBottom:"10px" }}>
+                          <div style={{ display:"flex", justifyContent:"space-between", fontSize:"11px", fontWeight:"700", color:"#64748b", marginBottom:"4px" }}>
+                            <span>Progression globale</span>
+                            <span style={{ color: barColor }}>{pctTotal}%</span>
+                          </div>
+                          <div style={{ background:"rgba(226,232,240,.6)", borderRadius:"100px", height:"8px", overflow:"hidden" }}>
+                            <div style={{ background: barColor, height:"100%", borderRadius:"100px", width:`${pctTotal}%`, transition:"width .4s ease" }}/>
+                          </div>
+                        </div>
+                        {/* Détail plats / ingrédients */}
+                        <div style={{ display:"flex", gap:"12px" }}>
+                          <div style={{ flex:1 }}>
+                            <div style={{ display:"flex", justifyContent:"space-between", fontSize:"11px", color:"#64748b", marginBottom:"3px" }}>
+                              <span>🍽️ Plats</span>
+                              <span style={{ fontWeight:"700" }}>{doneMeals}/{totalMeals}</span>
+                            </div>
+                            <div style={{ background:"rgba(226,232,240,.6)", borderRadius:"100px", height:"6px", overflow:"hidden" }}>
+                              <div style={{ background: pctMeals===100?"#10b981":"#f97316", height:"100%", borderRadius:"100px", width:`${pctMeals}%`, transition:"width .4s ease" }}/>
+                            </div>
+                          </div>
+                          <div style={{ flex:1 }}>
+                            <div style={{ display:"flex", justifyContent:"space-between", fontSize:"11px", color:"#64748b", marginBottom:"3px" }}>
+                              <span>🥕 Ingrédients</span>
+                              <span style={{ fontWeight:"700" }}>{doneIngs}/{totalIngs}</span>
+                            </div>
+                            <div style={{ background:"rgba(226,232,240,.6)", borderRadius:"100px", height:"6px", overflow:"hidden" }}>
+                              <div style={{ background: pctIngs===100?"#10b981":"#f97316", height:"100%", borderRadius:"100px", width:`${pctIngs}%`, transition:"width .4s ease" }}/>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   );
-                })}
+                })()}
+
+                {!activeMember && (
+                  <div style={{ marginTop:"12px", background:"rgba(241,245,249,.9)", borderRadius:"14px", padding:"16px", textAlign:"center", color:"#94a3b8", fontSize:"13px", fontWeight:"600" }}>
+                    👆 Sélectionne ton profil pour commencer à noter
+                  </div>
+                )}
               </div>
+
+              {/* Contenu bloqué tant que pas de profil sélectionné */}
+              {!activeMember ? null : (<>
 
               {/* Sous-onglets */}
               <div className="glass-pill" style={{ display:"flex", padding:"4px", marginBottom:"18px" }}>
@@ -1244,6 +1300,7 @@ function App() {
                   </div>
                 </div>
               )}
+              </>)}
             </div>
           </div>
         )}
@@ -1585,11 +1642,11 @@ function App() {
       <nav className="tab-bar">
         <div style={{ position:"absolute", top:"3px", right:"10px", fontSize:"9px", color:"#94a3b8" }}>{APP_VERSION}</div>
         {[
-          { id:"profiles", icon:"👤", label:"Profils" },
+          { id:"assistant",icon:"💬", label:"Assistant" },
           { id:"meals",    icon:"🍽️", label:"Plats" },
           { id:"tonight",  icon:"🌙", label:"Ce soir" },
           { id:"shopping", icon:"🛒", label:"Courses" },
-          { id:"assistant",icon:"💬", label:"Assistant" },
+          { id:"profiles", icon:"👤", label:"Profils" },
         ].map(t => (
           <button key={t.id} className={`tab-btn ${tab===t.id?"active":""}`} onClick={()=>setTab(t.id)}>
             <span className="tab-icon">{t.icon}</span>
